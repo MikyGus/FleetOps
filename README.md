@@ -35,4 +35,4 @@ Implementation roadmap available.
 
 ---
 
-This project is built as part of a structured backend portfolio.
+This project demonstrates structured backend design and production-style API behavior.
