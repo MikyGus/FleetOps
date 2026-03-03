@@ -1,6 +1,8 @@
-@FleetOps.Api_HostAddress = http://localhost:5144
+@baseUrl = http://localhost:5144
 
-GET {{FleetOps.Api_HostAddress}}/weatherforecast/
+###
+
+GET {{baseUrl}}/health
 Accept: application/json
 
 ###
