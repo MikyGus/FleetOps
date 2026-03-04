@@ -1,0 +1,23 @@
+name: fleetops
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: fleetops-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-fleetops}
+      POSTGRES_USER: ${POSTGRES_USER:-fleetops}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password_change_me}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - fleetops_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-fleetops} -d ${POSTGRES_DB:-fleetops}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  fleetops_pgdata:
