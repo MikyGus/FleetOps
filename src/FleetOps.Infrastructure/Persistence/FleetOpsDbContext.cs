@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using FleetOps.Domain.Assignments;
 
 namespace FleetOps.Infrastructure.Persistence;
 

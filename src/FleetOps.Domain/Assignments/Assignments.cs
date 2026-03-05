@@ -1,3 +1,5 @@
+namespace FleetOps.Domain.Assignments;
+
 public sealed class Assignment
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
