@@ -28,6 +28,10 @@ public sealed class ExceptionHandlingMiddleware
         {
             await HandlePostgresException(context, pgEx);
         }
+        catch (Exception)
+        {
+            await HandleUnexpectedException(context);
+        }
     }
 
     private static async Task HandleValidationException(HttpContext context, ValidationException ex)
@@ -85,6 +89,18 @@ public sealed class ExceptionHandlingMiddleware
                     "An unexpected database error occurred.");
                 break;
         }
+
+        await context.Response.WriteAsJsonAsync(response);
+    }
+
+    private static async Task HandleUnexpectedException(HttpContext context)
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "application/json";
+
+        var response = new ErrorResponse(
+            "internal_server_error",
+            "An unexpected error occurred.");
 
         await context.Response.WriteAsJsonAsync(response);
     }
