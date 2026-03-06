@@ -1,3 +1,4 @@
+using FleetOps.Api.Middleware;
 using FleetOps.Application.Assignments.CreateAssignment;
 using FleetOps.Infrastructure;
 using FluentValidation;
@@ -23,6 +24,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
