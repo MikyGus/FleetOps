@@ -16,6 +16,8 @@ public sealed class AssignmentsController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType<CreateAssignmentResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create([FromBody] CreateAssignmentRequest request, CancellationToken ct)
     {
         var command = new CreateAssignmentCommand(
@@ -27,6 +29,16 @@ public sealed class AssignmentsController : ControllerBase
 
         CreateAssignmentResult result = await _handler.HandleAsync(command, ct);
 
-        return Created($"/assignments/{result.Id}", new CreateAssignmentResponse(result.Id));
+        return CreatedAtAction(
+            nameof(GetById),
+            new { id = result.Id },
+            new CreateAssignmentResponse(result.Id)
+        );
+    }
+
+    [HttpGet("{id:guid}")]
+    public IActionResult GetById(Guid id)
+    {
+        return Ok(); // Placeholder
     }
 }
