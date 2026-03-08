@@ -1,5 +1,6 @@
 using FleetOps.Api.Middleware;
 using FleetOps.Application.Assignments.CreateAssignment;
+using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Infrastructure;
 using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddScoped<CreateAssignmentHandler>();
+builder.Services.AddScoped<GetAssignmentsHandler>();
 builder.Services.AddScoped<IValidator<CreateAssignmentCommand>, CreateAssignmentCommandValidator>();
 
 // Healthchecks
