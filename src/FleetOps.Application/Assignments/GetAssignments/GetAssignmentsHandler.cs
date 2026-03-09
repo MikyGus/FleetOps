@@ -1,17 +1,29 @@
+using FluentValidation;
+
 namespace FleetOps.Application.Assignments.GetAssignments;
 
 public sealed class GetAssignmentsHandler
 {
     private readonly IAssignmentQueries _queries;
+    private readonly IValidator<GetAssignmentsQuery> _validator;
 
-    public GetAssignmentsHandler(IAssignmentQueries queries)
+    public GetAssignmentsHandler(
+        IAssignmentQueries queries,
+        IValidator<GetAssignmentsQuery> validator)
     {
         _queries = queries;
+        _validator = validator;
     }
 
-    public Task<List<AssignmentDto>> HandleAsync(GetAssignmentsQuery query, CancellationToken ct)
+    public async Task<List<AssignmentDto>> HandleAsync(GetAssignmentsQuery query, CancellationToken ct)
     {
-        return _queries.GetAssignmentsAsync(
+        var validation =  await _validator.ValidateAsync(query, ct);
+        if (!validation.IsValid)
+        {
+            throw new ValidationException(validation.Errors);
+        }
+
+        return await _queries.GetAssignmentsAsync(
             query.DriverId,
             query.VehicleId,
             query.FromUtc,

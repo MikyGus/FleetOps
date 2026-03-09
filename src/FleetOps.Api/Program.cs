@@ -14,6 +14,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<CreateAssignmentHandler>();
 builder.Services.AddScoped<GetAssignmentsHandler>();
 builder.Services.AddScoped<IValidator<CreateAssignmentCommand>, CreateAssignmentCommandValidator>();
+builder.Services.AddScoped<IValidator<GetAssignmentsQuery>, GetAssignmentsQueryValidator>();
 
 // Healthchecks
 string? connectionString = builder.Configuration.GetConnectionString("Postgres");
