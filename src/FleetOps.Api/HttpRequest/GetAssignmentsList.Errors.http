@@ -1,0 +1,21 @@
+@baseUrl = http://localhost:5144/assignments
+
+### Filter by time, fromUtc is after toUtc
+
+GET {{baseUrl}}?fromUtc=2026-03-07T00:00:00Z&toUtc=2026-03-05T00:00:00Z
+Accept: application/json
+
+### Filter by limit, the limit is way to high
+
+GET {{baseUrl}}?limit=1000
+Accept: application/json
+
+### Filter by offset, the offset is invalid (-1)
+
+GET {{baseUrl}}?offset=-1
+Accept: application/json
+
+### Filter by limit, the limit is way to high AND fromUtc is after toUtc
+
+GET {{baseUrl}}?limit=1000&offset=-1&fromUtc=2026-03-07T00:00:00Z&toUtc=2026-03-05T00:00:00Z
+Accept: application/json

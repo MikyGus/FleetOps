@@ -1,4 +1,5 @@
 using FleetOps.Application.Assignments;
+using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Infrastructure.Assignments;
 using FleetOps.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,7 @@ public static class DependencyInjection
 
         services.AddDbContext<FleetOpsDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+        services.AddScoped<IAssignmentQueries, AssignmentQueries>();
 
         return services;
     }

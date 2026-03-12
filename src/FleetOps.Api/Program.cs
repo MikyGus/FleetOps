@@ -1,17 +1,14 @@
 using FleetOps.Api.Middleware;
-using FleetOps.Application.Assignments.CreateAssignment;
+using FleetOps.Application;
 using FleetOps.Infrastructure;
-using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddScoped<CreateAssignmentHandler>();
-builder.Services.AddScoped<IValidator<CreateAssignmentCommand>, CreateAssignmentCommandValidator>();
 
 // Healthchecks
 string? connectionString = builder.Configuration.GetConnectionString("Postgres");

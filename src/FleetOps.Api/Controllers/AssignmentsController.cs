@@ -1,5 +1,6 @@
 using FleetOps.Api.Contracts.Assignments;
 using FleetOps.Application.Assignments.CreateAssignment;
+using FleetOps.Application.Assignments.GetAssignments;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FleetOps.Api.Controllers;
@@ -8,11 +9,16 @@ namespace FleetOps.Api.Controllers;
 [Route("assignments")]
 public sealed class AssignmentsController : ControllerBase
 {
-    private readonly CreateAssignmentHandler _handler;
+    private readonly CreateAssignmentHandler _createHandler;
+    private readonly GetAssignmentsHandler _getHandler;
 
-    public AssignmentsController(CreateAssignmentHandler handler)
+
+    public AssignmentsController(
+        CreateAssignmentHandler createHandler,
+        GetAssignmentsHandler getHandler)
     {
-        _handler = handler;
+        _createHandler = createHandler;
+        _getHandler = getHandler;
     }
 
     [HttpPost]
@@ -27,13 +33,30 @@ public sealed class AssignmentsController : ControllerBase
             request.EndUtc
         );
 
-        CreateAssignmentResult result = await _handler.HandleAsync(command, ct);
+        CreateAssignmentResult result = await _createHandler.HandleAsync(command, ct);
 
         return CreatedAtAction(
             nameof(GetById),
             new { id = result.Id },
             new CreateAssignmentResponse(result.Id)
         );
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<AssignmentDto>>> Get(
+        [FromQuery] Guid? driverId,
+        [FromQuery] Guid? vehicleId,
+        [FromQuery] DateTimeOffset? fromUtc,
+        [FromQuery] DateTimeOffset? toUtc,
+        [FromQuery] int limit = 50,
+        [FromQuery] int offset = 0,
+        CancellationToken ct = default)
+    {
+        var query = new GetAssignmentsQuery(driverId, vehicleId, fromUtc, toUtc, limit, offset);
+
+        List<AssignmentDto> result = await _getHandler.HandleAsync(query, ct);
+
+        return Ok(result);
     }
 
     [HttpGet("{id:guid}")]

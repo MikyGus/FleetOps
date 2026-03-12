@@ -1,21 +1,6 @@
 @baseUrl = http://localhost:5144
 
 ###
-
-GET {{baseUrl}}/health/ready
-Accept: application/json
-
-###
-
-GET {{baseUrl}}/health/live
-Accept: application/json
-
-###
-
-GET {{baseUrl}}/assignments/11111111-1111-1111-1111-111111111111
-Accept: application/json
-
-###
 POST {{baseUrl}}/assignments
 Content-Type: application/json
 Accept: application/json
@@ -49,6 +34,9 @@ Accept: application/json
 {
   "driverId": "44444444-4444-4444-4444-444444444444",
   "vehicleId": "55555555-5555-5555-5555-555555555555",
-  "startUtc": "2026-03-05T15:00:00Z",
+  "startUtc": "2026-03-04T15:00:00Z",
   "endUtc": "2026-03-05T14:00:00Z"
 }
+
+###
+
