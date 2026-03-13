@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +11,20 @@ public sealed class AssignmentQueries : IAssignmentQueries
     public AssignmentQueries(FleetOpsDbContext db)
     {
         _db = db;
+    }
+
+    public async Task<AssignmentDto?> GetAssignmentByIdAsync(Guid id, CancellationToken ct)
+    {
+        return await _db.Assignments
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new AssignmentDto(
+                x.Id,
+                x.DriverId,
+                x.VehicleId,
+                x.StartUtc,
+                x.EndUtc))
+            .SingleOrDefaultAsync(ct);
     }
 
     public async Task<List<AssignmentDto>> GetAssignmentsAsync(
