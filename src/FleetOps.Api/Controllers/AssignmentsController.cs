@@ -11,14 +11,17 @@ public sealed class AssignmentsController : ControllerBase
 {
     private readonly CreateAssignmentHandler _createHandler;
     private readonly GetAssignmentsHandler _getHandler;
+    private readonly GetAssignmentByIdHandler _getByIdHandler;
 
 
     public AssignmentsController(
         CreateAssignmentHandler createHandler,
-        GetAssignmentsHandler getHandler)
+        GetAssignmentsHandler getHandler,
+        GetAssignmentByIdHandler getByIdHandler)
     {
         _createHandler = createHandler;
         _getHandler = getHandler;
+        _getByIdHandler = getByIdHandler;
     }
 
     [HttpPost]
@@ -60,8 +63,15 @@ public sealed class AssignmentsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
+    public async Task<ActionResult<AssignmentDto>> GetById(Guid id, CancellationToken ct)
     {
-        return Ok(); // Placeholder
+        AssignmentDto? assignment = await _getByIdHandler.HandleAsync(id, ct);
+         
+        if (assignment is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(assignment);
     }
 }
