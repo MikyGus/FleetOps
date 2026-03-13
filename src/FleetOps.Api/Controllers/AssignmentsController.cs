@@ -46,6 +46,7 @@ public sealed class AssignmentsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType<List<AssignmentDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<AssignmentDto>>> Get(
         [FromQuery] Guid? driverId,
         [FromQuery] Guid? vehicleId,
@@ -63,6 +64,8 @@ public sealed class AssignmentsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [ProducesResponseType<AssignmentDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AssignmentDto>> GetById(Guid id, CancellationToken ct)
     {
         AssignmentDto? assignment = await _getByIdHandler.HandleAsync(id, ct);
