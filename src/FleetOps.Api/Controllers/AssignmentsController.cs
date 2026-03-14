@@ -9,25 +9,13 @@ namespace FleetOps.Api.Controllers;
 [Route("assignments")]
 public sealed class AssignmentsController : ControllerBase
 {
-    private readonly CreateAssignmentHandler _createHandler;
-    private readonly GetAssignmentsHandler _getHandler;
-    private readonly GetAssignmentByIdHandler _getByIdHandler;
-
-
-    public AssignmentsController(
-        CreateAssignmentHandler createHandler,
-        GetAssignmentsHandler getHandler,
-        GetAssignmentByIdHandler getByIdHandler)
-    {
-        _createHandler = createHandler;
-        _getHandler = getHandler;
-        _getByIdHandler = getByIdHandler;
-    }
-
     [HttpPost]
     [ProducesResponseType<CreateAssignmentResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create([FromBody] CreateAssignmentRequest request, CancellationToken ct)
+    public async Task<IActionResult> Create(
+        [FromServices] CreateAssignmentHandler handler,
+        [FromBody] CreateAssignmentRequest request, 
+        CancellationToken ct)
     {
         var command = new CreateAssignmentCommand(
             request.DriverId,
@@ -36,7 +24,7 @@ public sealed class AssignmentsController : ControllerBase
             request.EndUtc
         );
 
-        CreateAssignmentResult result = await _createHandler.HandleAsync(command, ct);
+        CreateAssignmentResult result = await handler.HandleAsync(command, ct);
 
         return CreatedAtAction(
             nameof(GetById),
@@ -48,6 +36,7 @@ public sealed class AssignmentsController : ControllerBase
     [HttpGet]
     [ProducesResponseType<List<AssignmentDto>>(StatusCodes.Status200OK)]
     public async Task<ActionResult<List<AssignmentDto>>> Get(
+        [FromServices] GetAssignmentsHandler handler,
         [FromQuery] Guid? driverId,
         [FromQuery] Guid? vehicleId,
         [FromQuery] DateTimeOffset? fromUtc,
@@ -58,7 +47,7 @@ public sealed class AssignmentsController : ControllerBase
     {
         var query = new GetAssignmentsQuery(driverId, vehicleId, fromUtc, toUtc, limit, offset);
 
-        List<AssignmentDto> result = await _getHandler.HandleAsync(query, ct);
+        List<AssignmentDto> result = await handler.HandleAsync(query, ct);
 
         return Ok(result);
     }
@@ -66,9 +55,12 @@ public sealed class AssignmentsController : ControllerBase
     [HttpGet("{id:guid}")]
     [ProducesResponseType<AssignmentDto>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<AssignmentDto>> GetById(Guid id, CancellationToken ct)
+    public async Task<ActionResult<AssignmentDto>> GetById(
+        [FromServices] GetAssignmentByIdHandler handler,
+        Guid id, 
+        CancellationToken ct)
     {
-        AssignmentDto? assignment = await _getByIdHandler.HandleAsync(id, ct);
+        AssignmentDto? assignment = await handler.HandleAsync(id, ct);
          
         if (assignment is null)
         {
