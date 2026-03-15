@@ -1,4 +1,5 @@
 # FleetOps
+![CI](https://github.com/MikyGus/FleetOps/actions/workflows/ci.yml/badge.svg)
 
 FleetOps is a backend system built with ASP.NET Core and PostgreSQL using Clean Architecture principles.
 
@@ -27,11 +28,6 @@ Assignments enforce strict non-overlapping time intervals at both application an
 - PostgreSQL
 - Entity Framework Core
 - Docker
-
-## Status
-
-Phase 0 - Repository initialized  
-Implementation roadmap available.
 
 ---
 
