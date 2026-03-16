@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
 using FleetOps.Domain.Assignments;
+using FleetOps.Domain.Drivers;
+using Microsoft.EntityFrameworkCore;
 
 namespace FleetOps.Infrastructure.Persistence;
 
@@ -10,6 +11,7 @@ public sealed class FleetOpsDbContext : DbContext
     }
 
     public DbSet<Assignment> Assignments => Set<Assignment>();
+    public DbSet<Driver> Drivers => Set<Driver>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +27,25 @@ public sealed class FleetOpsDbContext : DbContext
 
            entity.Property(x => x.StartUtc).HasColumnName("start_utc").IsRequired();
            entity.Property(x => x.EndUtc).HasColumnName("end_utc").IsRequired(); 
+        });
+
+        modelBuilder.Entity<Driver>(entity =>
+        {
+           entity.ToTable("drivers");
+
+           entity.HasKey(x => x.Id);
+
+           entity.Property(x => x.Id)
+                .HasColumnName("id");
+           
+           entity.Property(x => x.Name)
+                .HasColumnName("name")
+                .HasMaxLength(200)
+                .IsRequired();
+            
+           entity.Property(x => x.IsActive)
+                .HasColumnName("is_active")
+                .IsRequired();
         });
     }
 }
