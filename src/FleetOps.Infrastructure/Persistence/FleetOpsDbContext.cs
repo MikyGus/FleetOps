@@ -1,5 +1,6 @@
 using FleetOps.Domain.Assignments;
 using FleetOps.Domain.Drivers;
+using FleetOps.Domain.Vehicles;
 using Microsoft.EntityFrameworkCore;
 
 namespace FleetOps.Infrastructure.Persistence;
@@ -12,6 +13,7 @@ public sealed class FleetOpsDbContext : DbContext
 
     public DbSet<Assignment> Assignments => Set<Assignment>();
     public DbSet<Driver> Drivers => Set<Driver>();
+    public DbSet<Vehicle> Vehicles => Set<Vehicle>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -46,6 +48,26 @@ public sealed class FleetOpsDbContext : DbContext
            entity.Property(x => x.IsActive)
                 .HasColumnName("is_active")
                 .IsRequired();
+        });
+
+        modelBuilder.Entity<Vehicle>(entity =>
+        {
+           entity.ToTable("vehicles");
+
+           entity.HasKey(x => x.Id);
+
+           entity.Property(x => x.Id).HasColumnName("id");
+
+           entity.Property(x => x.RegistrationNumber)
+                .HasColumnName("registration_number")
+                .HasMaxLength(20)
+                .IsRequired();
+                
+           entity.Property(x => x.IsActive)
+                .HasColumnName("is_active")
+                .IsRequired();
+
+           entity.HasIndex(x => x.RegistrationNumber).IsUnique();
         });
     }
 }
