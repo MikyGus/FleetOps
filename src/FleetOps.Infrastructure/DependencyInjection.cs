@@ -1,6 +1,9 @@
 using FleetOps.Application.Assignments;
 using FleetOps.Application.Assignments.GetAssignments;
+using FleetOps.Application.Drivers;
+using FleetOps.Application.Drivers.GetDrivers;
 using FleetOps.Infrastructure.Assignments;
+using FleetOps.Infrastructure.Drivers;
 using FleetOps.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,6 +25,8 @@ public static class DependencyInjection
         services.AddDbContext<FleetOpsDbContext>(options => options.UseNpgsql(connectionString));
         services.AddScoped<IAssignmentRepository, AssignmentRepository>();
         services.AddScoped<IAssignmentQueries, AssignmentQueries>();
+        services.AddScoped<IDriverRepository, DriverRepository>();
+        services.AddScoped<IDriverQueries, DriverQueries>();
 
         return services;
     }
