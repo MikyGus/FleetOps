@@ -8,6 +8,8 @@ public sealed class CreateDriverCommandValidator : AbstractValidator<CreateDrive
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .WithMessage("{PropertyName} may not be empty.")
+            .MaximumLength(200)
+            .WithMessage("{PropertyName} is {TotalLength}, but must be at most {MaxLength} characters long.");
     }
 }
