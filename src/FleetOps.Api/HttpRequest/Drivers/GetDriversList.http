@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:5144/drivers
+
+### 
+
+GET {{baseUrl}}
+Accept: application/json
+
+###
+
+GET {{baseUrl}}?name=mik
+Accept: application/json
+
+###
+
+GET {{baseUrl}}?isActive=true
+Accept: application/json

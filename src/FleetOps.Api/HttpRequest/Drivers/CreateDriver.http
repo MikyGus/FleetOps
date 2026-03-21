@@ -1,0 +1,11 @@
+@baseUrl = http://localhost:5144/drivers
+
+###
+POST {{baseUrl}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "Mikael Gustafsson"
+}
+
