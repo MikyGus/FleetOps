@@ -1,4 +1,4 @@
-namespace FleetOps.Application.Assignments.GetAssignments;
+namespace FleetOps.Application.Assignments;
 
 public sealed record AssignmentDto(
     Guid Id,

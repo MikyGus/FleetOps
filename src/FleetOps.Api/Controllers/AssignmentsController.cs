@@ -1,4 +1,5 @@
 using FleetOps.Api.Contracts.Assignments;
+using FleetOps.Application.Assignments;
 using FleetOps.Application.Assignments.CreateAssignment;
 using FleetOps.Application.Assignments.GetAssignments;
 using Microsoft.AspNetCore.Mvc;
