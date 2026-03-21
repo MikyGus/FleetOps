@@ -1,3 +1,4 @@
+using FleetOps.Application.Assignments;
 using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
