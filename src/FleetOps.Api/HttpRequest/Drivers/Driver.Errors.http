@@ -1,0 +1,19 @@
+@baseUrl = http://localhost:5144/drivers
+
+### Name to short
+POST {{baseUrl}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": ""
+}
+
+### Name to long
+POST {{baseUrl}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "name": "löasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsd"
+}

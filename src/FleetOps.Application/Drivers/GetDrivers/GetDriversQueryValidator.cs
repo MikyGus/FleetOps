@@ -1,4 +1,4 @@
-using System.IO.Compression;
+using FleetOps.Application.Validations;
 using FluentValidation;
 
 namespace FleetOps.Application.Drivers.GetDrivers;
@@ -7,15 +7,12 @@ public sealed class GetDriversQueryValidator : AbstractValidator<GetDriversQuery
 {
     public GetDriversQueryValidator()
     {
-        RuleFor(x => x.Limit)
-            .GreaterThan(0)
-            .LessThanOrEqualTo(500);
+        RuleFor(x => x.Limit).ValidLimit();
 
-        RuleFor(x => x.Offset)
-            .GreaterThanOrEqualTo(0);
+        RuleFor(x => x.Offset).ValidOffset();
 
         RuleFor(x => x.Name)
-            .MaximumLength(200)
+            .MaxNameLength()
             .When(x => !string.IsNullOrWhiteSpace(x.Name));
     }
 }

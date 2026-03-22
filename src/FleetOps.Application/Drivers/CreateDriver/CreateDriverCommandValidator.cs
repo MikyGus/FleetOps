@@ -1,3 +1,4 @@
+using FleetOps.Application.Validations;
 using FluentValidation;
 
 namespace FleetOps.Application.Drivers.CreateDriver;
@@ -8,6 +9,7 @@ public sealed class CreateDriverCommandValidator : AbstractValidator<CreateDrive
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .WithMessage("{PropertyName} may not be empty.")
+            .MaxNameLength();
     }
 }

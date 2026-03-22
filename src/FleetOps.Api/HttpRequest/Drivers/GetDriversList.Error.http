@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:5144/drivers
+
+### Name to long
+GET {{baseUrl}}?name=löasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsdlöasdjfaölskdjfölakjsd
+Content-Type: application/json
+Accept: application/json
+
+### Filter by limit, the limit is way to high
+
+GET {{baseUrl}}?limit=1000
+Accept: application/json
+
+### Filter by offset, the offset is invalid (-1)
+
+GET {{baseUrl}}?offset=-1
+Accept: application/json
