@@ -2,9 +2,11 @@ using FleetOps.Application.Assignments;
 using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Application.Drivers;
 using FleetOps.Application.Drivers.GetDrivers;
+using FleetOps.Application.Vehicles;
 using FleetOps.Infrastructure.Assignments;
 using FleetOps.Infrastructure.Drivers;
 using FleetOps.Infrastructure.Persistence;
+using FleetOps.Infrastructure.Vehicles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +29,7 @@ public static class DependencyInjection
         services.AddScoped<IAssignmentQueries, AssignmentQueries>();
         services.AddScoped<IDriverRepository, DriverRepository>();
         services.AddScoped<IDriverQueries, DriverQueries>();
+        services.AddScoped<IVehicleRepository, VehicleRepository>();
 
         return services;
     }

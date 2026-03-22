@@ -4,6 +4,7 @@ using FleetOps.Application.Assignments.CreateAssignment;
 using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Application.Drivers.CreateDriver;
 using FleetOps.Application.Drivers.GetDrivers;
+using FleetOps.Application.Vehicles.CreateVehicle;
 
 namespace FleetOps.Application;
 
@@ -24,6 +25,10 @@ public static class DependencyInjection
 
         services.AddScoped<IValidator<CreateDriverCommand>, CreateDriverCommandValidator>();
         services.AddScoped<IValidator<GetDriversQuery>, GetDriversQueryValidator>();
+
+        services.AddScoped<CreateVehicleHandler>();
+
+        services.AddScoped<IValidator<CreateVehicleCommand>, CreateVehicleCommandValidator>();
 
         return services;
     }
