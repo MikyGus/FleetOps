@@ -3,28 +3,8 @@ using System.Linq.Expressions;
 
 namespace FleetOps.Application.Validations;
 
-public static class ValidationExtentions
+public static class DateValidationExtensions
 {
-    public static IRuleBuilderOptions<T, int> ValidLimit<T>(this IRuleBuilder<T, int> ruleBuilder)
-        => ruleBuilder
-            .InclusiveBetween(ValidationConstants.Pagination.MinPageSize, ValidationConstants.Pagination.MaxPageSize)
-            .WithMessage("{PropertyName} must be between {From} and {To}.");
-
-    public static IRuleBuilderOptions<T, int> ValidOffset<T>(this IRuleBuilder<T, int> ruleBuilder) 
-        => ruleBuilder
-            .GreaterThanOrEqualTo(0)
-            .WithMessage("{PropertyName} must be greater than or equal to {ComparisonValue}.");
-
-    public static IRuleBuilderOptions<T, string?> MaxNameLength<T>(this IRuleBuilder<T, string?> ruleBuilder)
-        => ruleBuilder
-            .MaximumLength(ValidationConstants.Names.MaxLength)
-            .WithMessage("{PropertyName} is {TotalLength}, but must be at most {MaxLength} characters long.");
-
-    public static IRuleBuilderOptions<T, Guid> ValidRequiredId<T>(this IRuleBuilder<T, Guid> ruleBuilder)
-        => ruleBuilder
-            .NotEmpty()
-            .WithMessage("{PropertyName} must not be a non-empty GUID.");
-
     public static IRuleBuilderOptionsConditions<T, T> ValidDateOrder<T>(
         this IRuleBuilderInitial<T, T> ruleBuilder,
         Expression<Func<T, DateTimeOffset?>> fromExpression,
@@ -49,7 +29,7 @@ public static class ValidationExtentions
         });
     }
 
-        public static IRuleBuilderOptionsConditions<T, T> ValidDateOrder<T>(
+    public static IRuleBuilderOptionsConditions<T, T> ValidDateOrder<T>(
         this IRuleBuilderInitial<T, T> ruleBuilder,
         Expression<Func<T, DateTimeOffset>> fromExpression,
         Expression<Func<T, DateTimeOffset>> toExpression)

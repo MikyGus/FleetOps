@@ -17,7 +17,7 @@ Accept: application/json
 
 ### Filter by time
 
-GET {{baseUrl}}?fromUtc=2026-03-05T00:00:00Z&toUtc=2026-03-05T00:00:00Z
+GET {{baseUrl}}?fromUtc=2026-03-05T00:00:00Z&toUtc=2026-03-05T01:00:00Z
 Accept: application/json
 
 ### Filter by limit
