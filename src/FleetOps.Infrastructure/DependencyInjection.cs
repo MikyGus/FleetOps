@@ -3,6 +3,7 @@ using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Application.Drivers;
 using FleetOps.Application.Drivers.GetDrivers;
 using FleetOps.Application.Vehicles;
+using FleetOps.Application.Vehicles.GetVehicles;
 using FleetOps.Infrastructure.Assignments;
 using FleetOps.Infrastructure.Drivers;
 using FleetOps.Infrastructure.Persistence;
@@ -30,6 +31,7 @@ public static class DependencyInjection
         services.AddScoped<IDriverRepository, DriverRepository>();
         services.AddScoped<IDriverQueries, DriverQueries>();
         services.AddScoped<IVehicleRepository, VehicleRepository>();
+        services.AddScoped<IVehicleQueries, VehicleQueries>();
 
         return services;
     }

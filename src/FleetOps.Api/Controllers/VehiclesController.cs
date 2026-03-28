@@ -1,5 +1,8 @@
+using System.Threading.Tasks;
 using FleetOps.Api.Contracts.Vehicles;
+using FleetOps.Application.Vehicles;
 using FleetOps.Application.Vehicles.CreateVehicle;
+using FleetOps.Application.Vehicles.GetVehicles;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FleetOps.Api.Controllers;
@@ -27,9 +30,21 @@ public sealed class VehicleController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public IActionResult GetById(Guid id)
+    [ProducesResponseType<VehicleDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(
+        Guid id,
+        [FromServices] GetVehicleByIdHandler handler,
+        CancellationToken ct)
     {
-        return Ok(); // Placeholder
+        VehicleDto? vehicle = await handler.HandleAsync(id, ct);
+
+        if (vehicle is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(vehicle);
     }
 
 }
