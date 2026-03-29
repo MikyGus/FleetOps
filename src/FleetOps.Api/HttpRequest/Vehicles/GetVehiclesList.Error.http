@@ -1,0 +1,21 @@
+@baseUrl = http://localhost:5144/vehicles
+
+### 
+
+GET {{baseUrl}}?registrationnumber=lasdkjfaölsdjföalksdjfalöksdk3sdlfalaksjdflkcvhueoiauhfskdjvbnzxcm,vnzkuzhfuheizslifujzhsssxldkjvhzlkjdhfeizuhlsfiuzshlfiuzshdfliizhsdufilzhsfsdlksdjfsdkjeks.vm.m,n0wisdfsdfsdofusöoisudofidölsdkfölskdflöskdlöfkslödfkslödkf
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?limit=-1
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?limit=1000
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?offset=-1
+Accept: application/json

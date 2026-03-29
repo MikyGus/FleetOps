@@ -28,9 +28,11 @@ public static class DependencyInjection
         services.AddScoped<IValidator<GetDriversQuery>, GetDriversQueryValidator>();
 
         services.AddScoped<CreateVehicleHandler>();
+        services.AddScoped<GetVehiclesHandler>();
         services.AddScoped<GetVehicleByIdHandler>();
 
         services.AddScoped<IValidator<CreateVehicleCommand>, CreateVehicleCommandValidator>();
+        services.AddScoped<IValidator<GetVehiclesQuery>, GetVehiclesQueryValidator>();
 
         return services;
     }
