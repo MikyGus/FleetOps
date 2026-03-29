@@ -12,7 +12,7 @@ public static class StringValidationExtensions
     public static IRuleBuilderOptions<T, string> ValidRegistrationNumber<T>(this IRuleBuilder<T, string> ruleBuilder) 
         => ruleBuilder
             .NotEmpty()
-                .WithMessage("{PropertyName} may not be empty.")
+                .WithMessage(ValidationConstants.MessageTemplateRequired)
             .MaximumLength(ValidationConstants.RegistrationNumber.MaxLength)
                 .WithMessage(ValidationConstants.RegistrationNumber.MessageTemplate);
     

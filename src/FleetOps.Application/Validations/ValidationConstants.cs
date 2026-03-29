@@ -2,6 +2,8 @@ namespace FleetOps.Application.Validations;
 
 public static class ValidationConstants
 {
+    public const string MessageTemplateRequired = "{PropertyName} may not be empty.";
+    
     public static class Names
     {
         public const int MaxLength = 200;
