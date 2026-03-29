@@ -9,7 +9,7 @@ public sealed class CreateDriverCommandValidator : AbstractValidator<CreateDrive
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage(ValidationConstants.MessageTemplateRequired)
+            .WithMessage(ValidationConstants.MessageTemplate.Required)
             .MaxNameLength();
     }
 }
