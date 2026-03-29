@@ -8,3 +8,12 @@ Accept: application/json
 {
     "registrationnumber": ""
 }
+
+### To long registrationnumber
+POST {{baseUrl}}
+Content-Type: application/json
+Accept: application/json
+
+{
+    "registrationnumber": "lasdkjfaölsdjföalksdjfalöksdk3sdlfalaksjdflkcvhueoi"
+}

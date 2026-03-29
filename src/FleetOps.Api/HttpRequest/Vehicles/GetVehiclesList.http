@@ -1,0 +1,31 @@
+@baseUrl = http://localhost:5144/vehicles
+
+### 
+
+GET {{baseUrl}}
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?registrationnumber=123
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?registrationnumber=aBc
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?isactive=true
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?limit=1
+Accept: application/json
+
+### 
+
+GET {{baseUrl}}?offset=1
+Accept: application/json

@@ -47,4 +47,22 @@ public sealed class VehicleController : ControllerBase
         return Ok(vehicle);
     }
 
+    [HttpGet]
+    [ProducesResponseType<List<VehicleDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<List<VehicleDto>>> GetVehicles(
+        [FromServices] GetVehiclesHandler handler,
+        [FromQuery] string? registrationnumber,
+        [FromQuery] bool? isActive,
+        [FromQuery] int limit = 50,
+        [FromQuery] int offset = 0,
+        CancellationToken ct = default
+    )
+    {
+        var query = new GetVehiclesQuery(registrationnumber, isActive, limit, offset);
+
+        List<VehicleDto> result = await handler.HandleAsync(query, ct);
+
+        return Ok(result);
+    }
 }
