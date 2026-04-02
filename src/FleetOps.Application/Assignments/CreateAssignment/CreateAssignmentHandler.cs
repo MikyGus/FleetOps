@@ -1,4 +1,3 @@
-using FleetOps.Application.Assignments;
 using FleetOps.Domain.Assignments;
 using FluentValidation;
 
@@ -21,12 +20,8 @@ public sealed class CreateAssignmentHandler
         CreateAssignmentCommand command, 
         CancellationToken ct)
     {
-        var validation = await _validator.ValidateAsync(command, ct);
-        if (!validation.IsValid)
-        {
-            throw new ValidationException(validation.Errors);
-        }
-
+        await _validator.ValidateAndThrowAsync(command, ct);
+        
         var assignment = new Assignment(
             command.DriverId,
             command.VehicleId,
