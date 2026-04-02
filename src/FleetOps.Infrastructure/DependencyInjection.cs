@@ -6,6 +6,7 @@ using FleetOps.Application.Validations;
 using FleetOps.Application.Vehicles;
 using FleetOps.Application.Vehicles.GetVehicles;
 using FleetOps.Domain.Drivers;
+using FleetOps.Domain.Vehicles;
 using FleetOps.Infrastructure.Assignments;
 using FleetOps.Infrastructure.Drivers;
 using FleetOps.Infrastructure.Persistence;
@@ -37,6 +38,7 @@ public static class DependencyInjection
 
         services.AddScoped<IVehicleRepository, VehicleRepository>();
         services.AddScoped<IVehicleQueries, VehicleQueries>();
+        services.AddScoped<IEntityExistenceChecker<Vehicle, Guid>, VehicleExistenceChecker>();
 
         return services;
     }
