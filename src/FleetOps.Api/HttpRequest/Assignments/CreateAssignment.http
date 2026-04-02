@@ -1,4 +1,6 @@
 @baseUrl = http://localhost:5144
+@validDriver = "76ccefd1-30e9-402c-a61a-18314569c789"
+@validVehicle = "119e6e44-fe0e-465e-918f-2a50ed92bed3"
 
 ###
 POST {{baseUrl}}/assignments
@@ -6,8 +8,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "driverId": "11111111-1111-1111-1111-111111111111",
-  "vehicleId": "22222222-2222-2222-2222-222222222222",
+  "driverId": {{validDriver}},
+  "vehicleId": {{validVehicle}},
   "startUtc": "2026-03-05T10:00:00Z",
   "endUtc": "2026-03-05T12:00:00Z"
 }
@@ -19,8 +21,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "driverId": "11111111-1111-1111-1111-111111111111",
-  "vehicleId": "33333333-3333-3333-3333-333333333333",
+  "driverId": {{validDriver}},
+  "vehicleId": {{validVehicle}},
   "startUtc": "2026-03-05T11:00:00Z",
   "endUtc": "2026-03-05T13:00:00Z"
 }
@@ -32,8 +34,8 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "driverId": "44444444-4444-4444-4444-444444444444",
-  "vehicleId": "55555555-5555-5555-5555-555555555555",
+  "driverId": {{validDriver}},
+  "vehicleId": {{validVehicle}},
   "startUtc": "2026-03-04T15:00:00Z",
   "endUtc": "2026-03-05T14:00:00Z"
 }
