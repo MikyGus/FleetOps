@@ -1,3 +1,6 @@
+using FleetOps.Domain.Drivers;
+using FleetOps.Domain.Vehicles;
+
 namespace FleetOps.Domain.Assignments;
 
 public sealed class Assignment
@@ -7,9 +10,13 @@ public sealed class Assignment
     public Guid DriverId { get; private set; }
     public Guid VehicleId { get; private set; }
 
+
     public DateTimeOffset StartUtc { get; private set; }
     public DateTimeOffset EndUtc { get; private set; }
 
+    public Driver Driver { get; private set; } = null!;
+    public Vehicle Vehicle { get; private set; } = null!;
+    
     private Assignment() {} // For ORM
 
     public Assignment(Guid driverId, Guid vehicleId, DateTimeOffset startUtc, DateTimeOffset endUtc)
