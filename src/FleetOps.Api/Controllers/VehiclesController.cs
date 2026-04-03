@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using FleetOps.Api.Contracts.Vehicles;
 using FleetOps.Application.Vehicles;
 using FleetOps.Application.Vehicles.CreateVehicle;
