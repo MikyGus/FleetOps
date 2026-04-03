@@ -3,6 +3,7 @@ using System;
 using FleetOps.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FleetOps.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(FleetOpsDbContext))]
-    partial class FleetOpsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260403101849_AddAssignmentForeignKeys")]
+    partial class AddAssignmentForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

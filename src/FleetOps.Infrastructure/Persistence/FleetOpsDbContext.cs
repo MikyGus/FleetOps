@@ -29,6 +29,16 @@ public sealed class FleetOpsDbContext : DbContext
 
            entity.Property(x => x.StartUtc).HasColumnName("start_utc").IsRequired();
            entity.Property(x => x.EndUtc).HasColumnName("end_utc").IsRequired(); 
+
+           entity.HasOne(x => x.Driver)
+               .WithMany(x => x.Assignments)
+               .HasForeignKey(x => x.DriverId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+           entity.HasOne(x => x.Vehicle)
+               .WithMany(x => x.Assignments)
+               .HasForeignKey(x => x.VehicleId)
+               .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Driver>(entity =>
