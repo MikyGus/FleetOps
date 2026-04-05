@@ -12,7 +12,7 @@ public sealed class GetDriversQueryValidator : AbstractValidator<GetDriversQuery
         RuleFor(x => x.Offset).ValidOffset();
 
         RuleFor(x => x.Name)
-            .MaxNameLength()
+            .MaxNameLength(ValidationErrorCodes.Driver.Name.MaxLengthExceeded)
             .When(x => !string.IsNullOrWhiteSpace(x.Name));
     }
 }

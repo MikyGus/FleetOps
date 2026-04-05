@@ -7,10 +7,12 @@ public static class PaginationValidationExtensions
     public static IRuleBuilderOptions<T, int> ValidLimit<T>(this IRuleBuilder<T, int> ruleBuilder)
         => ruleBuilder
             .InclusiveBetween(ValidationConstants.Pagination.MinPageSize, ValidationConstants.Pagination.MaxPageSize)
-            .WithMessage("{PropertyName} must be between {From} and {To}.");
+            .WithMessage("{PropertyName} must be between {From} and {To}.")
+            .WithErrorCode(ValidationErrorCodes.Pagination.Limit.Invalid);
 
     public static IRuleBuilderOptions<T, int> ValidOffset<T>(this IRuleBuilder<T, int> ruleBuilder) 
         => ruleBuilder
             .GreaterThanOrEqualTo(0)
-            .WithMessage("{PropertyName} must be greater than or equal to {ComparisonValue}.");
+            .WithMessage("{PropertyName} must be greater than or equal to {ComparisonValue}.")
+            .WithErrorCode(ValidationErrorCodes.Pagination.Offset.Invalid);
 }

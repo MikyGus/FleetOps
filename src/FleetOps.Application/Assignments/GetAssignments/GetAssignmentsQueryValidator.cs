@@ -11,6 +11,7 @@ public sealed class GetAssignmentsQueryValidator : AbstractValidator<GetAssignme
 
         RuleFor(x => x.Offset).ValidOffset();
 
-        RuleFor(x => x).ValidDateOrder(x => x.FromUtc, x => x.ToUtc);
+        RuleFor(x => x).ValidDateOrder(x => x.FromUtc, x => x.ToUtc,
+            ValidationErrorCodes.Assignment.TimeRange.Invalid);
     }
 }
