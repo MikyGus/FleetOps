@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using FleetOps.Application.Assignments.CreateAssignment;
 using FleetOps.Application.Validations;
 using FleetOps.Domain.Drivers;
