@@ -31,7 +31,7 @@ public sealed class CreateDriverCommandValidationTests
     }
 
     [Fact]
-    public async Task Should_accept_length_of_name_at_maximum()
+    public async Task Should_not_have_error_when_length_of_name_at_maximum()
     {
         var command = new CreateDriverCommand(new string(
             'X',
