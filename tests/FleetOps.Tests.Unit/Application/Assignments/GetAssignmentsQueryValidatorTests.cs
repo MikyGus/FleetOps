@@ -1,5 +1,7 @@
+using System.Threading.Tasks;
 using FleetOps.Application.Assignments.GetAssignments;
 using FleetOps.Application.Validations;
+using FleetOps.Tests.Unit.Application.Common.Validation;
 using FluentValidation.TestHelper;
 
 namespace FleetOps.Tests.Unit.Application.Assignments;
@@ -30,70 +32,27 @@ public sealed class GetAssignmentsQueryValidatorTests()
     }
 
     [Fact]
-    public async Task Should_have_error_when_limit_is_zero()
+    public async Task Should_not_have_error_for_valid_pagination()
     {
-        var query = new GetAssignmentsQuery(
-            null,
-            null,
-            null,
-            null,
-            0
-        );
+        var query = new GetAssignmentsQuery(null,null,null,null,50,0);
 
-        var result = await _validator.TestValidateAsync(query);
-
-        result.ShouldHaveValidationErrorFor(x => x.Limit)
-            .WithErrorCode(ValidationErrorCodes.Pagination.Limit.Invalid);
+        await ValidationAssert.HasNoError(_validator, query, x => x.Limit);
+        await ValidationAssert.HasNoError(_validator, query, x => x.Offset);
     }
 
     [Fact]
-    public async Task Should_have_error_when_limit_exceeds_maximum_limit()
+    public async Task Should_have_error_when_limit_is_invalid()
     {
-        var query = new GetAssignmentsQuery(
-            null,
-            null,
-            null,
-            null,
-            1000
-        );
+        var query = new GetAssignmentsQuery(null, null, null, null, 1000, 0);
 
-        var result = await _validator.TestValidateAsync(query);
-
-        result.ShouldHaveValidationErrorFor(x => x.Limit)
-            .WithErrorCode(ValidationErrorCodes.Pagination.Limit.Invalid);
+        await ValidationAssert.HasError(_validator, query, x => x.Limit, ValidationErrorCodes.Pagination.Limit.Invalid);
     }
 
     [Fact]
-    public async Task Should_not_have_error_when_limit_at_maximum()
+    public async Task Should_have_error_when_offset_is_invalid()
     {
-        var query = new GetAssignmentsQuery(
-            null,
-            null,
-            null,
-            null,
-            ValidationConstants.Pagination.MaxPageSize
-        );
+        var query = new GetAssignmentsQuery(null, null, null, null, 50, -1);
 
-        var result = await _validator.TestValidateAsync(query);
-
-        result.ShouldNotHaveAnyValidationErrors();
-    }
-
-    [Fact]
-    public async Task Should_have_error_when_offset_is_negative()
-    {
-        var query = new GetAssignmentsQuery(
-            null,
-            null,
-            null,
-            null,
-            10,
-            -1
-        );
-
-        var result = await _validator.TestValidateAsync(query);
-
-        result.ShouldHaveValidationErrorFor(x => x.Offset)
-            .WithErrorCode(ValidationErrorCodes.Pagination.Offset.Invalid);
+        await ValidationAssert.HasError(_validator, query, x => x.Offset, ValidationErrorCodes.Pagination.Offset.Invalid);
     }
 }

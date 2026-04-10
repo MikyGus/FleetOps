@@ -1,5 +1,6 @@
 using FleetOps.Application.Drivers.GetDrivers;
 using FleetOps.Application.Validations;
+using FleetOps.Tests.Unit.Application.Common.Validation;
 using FluentValidation.TestHelper;
 
 namespace FleetOps.Tests.Unit.Application.Drivers;
@@ -31,4 +32,30 @@ public sealed class GetDriverQueryValidatorTests
 
         result.ShouldNotHaveAnyValidationErrors();
     }
+
+    [Fact]
+    public async Task Should_not_have_error_for_valid_pagination()
+    {
+        var query = new GetDriversQuery(null, null, 50, 0);
+
+        await ValidationAssert.HasNoError(_validator, query, x => x.Limit);
+        await ValidationAssert.HasNoError(_validator, query, x => x.Offset);
+    }
+
+    [Fact]
+    public async Task Should_have_error_when_limit_is_invalid()
+    {
+        var query = new GetDriversQuery(null, null, 1000, 0);
+
+        await ValidationAssert.HasError(_validator, query, x => x.Limit, ValidationErrorCodes.Pagination.Limit.Invalid);
+    }
+
+    [Fact]
+    public async Task Should_have_error_when_offset_is_invalid()
+    {
+        var query = new GetDriversQuery(null, null, 50, -1);
+
+        await ValidationAssert.HasError(_validator, query, x => x.Offset, ValidationErrorCodes.Pagination.Offset.Invalid);
+    }
+
 }
