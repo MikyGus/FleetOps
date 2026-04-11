@@ -5,7 +5,7 @@ using FluentValidation.TestHelper;
 
 namespace FleetOps.Tests.Unit.Application.Drivers;
 
-public sealed class GetDriverQueryValidatorTests
+public sealed class GetDriversQueryValidatorTests
 {
     private readonly GetDriversQueryValidator _validator = new();
 
