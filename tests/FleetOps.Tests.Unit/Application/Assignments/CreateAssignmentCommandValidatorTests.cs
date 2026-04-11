@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using FleetOps.Application.Assignments.CreateAssignment;
 using FleetOps.Application.Validations;
 using FleetOps.Domain.Drivers;
@@ -69,7 +70,59 @@ public sealed class CreateAssignmentCommandValidatorTests
 
         result.ShouldHaveValidationErrorFor(x => x.VehicleId)
             .WithErrorCode(ValidationErrorCodes.Assignment.VehicleId.Required);
-    }                                 
+    }
+
+    [Fact]
+    public async Task Should_have_error_if_driver_does_not_exist()
+    {
+        _driverChecker
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+        
+        _vehicleChecker
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        var startUtc = new DateTimeOffset(2026, 4, 5, 10, 0, 0, TimeSpan.Zero);
+        var endUtc = new DateTimeOffset(2026, 4, 5, 11, 0, 0, TimeSpan.Zero);
+
+        var command = new CreateAssignmentCommand(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            startUtc,
+            endUtc);
+
+        var result = await _validator.TestValidateAsync(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.DriverId)
+            .WithErrorCode(ValidationErrorCodes.Assignment.DriverId.NotFound);
+    }             
+
+    [Fact]
+    public async Task Should_have_error_if_vehicle_does_not_exist()
+    {
+        _driverChecker
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        _vehicleChecker
+            .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        var startUtc = new DateTimeOffset(2026, 4, 5, 10, 0, 0, TimeSpan.Zero);
+        var endUtc = new DateTimeOffset(2026, 4, 5, 11, 0, 0, TimeSpan.Zero);
+
+        var command = new CreateAssignmentCommand(
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            startUtc,
+            endUtc);
+
+        var result = await _validator.TestValidateAsync(command);
+
+        result.ShouldHaveValidationErrorFor(x => x.VehicleId)
+            .WithErrorCode(ValidationErrorCodes.Assignment.VehicleId.NotFound);
+    }
 
     [Fact]
     public async Task Should_have_error_when_endUtc_is_before_startUtc()
