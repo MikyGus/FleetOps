@@ -5,7 +5,7 @@ using FluentValidation.TestHelper;
 
 namespace FleetOps.Tests.Unit.Application.Vehicles;
 
-public sealed class GetVehiclesQueryValidationTests
+public sealed class GetVehiclesQueryValidatorTests
 {
     private readonly GetVehiclesQueryValidator _validator = new();
 
