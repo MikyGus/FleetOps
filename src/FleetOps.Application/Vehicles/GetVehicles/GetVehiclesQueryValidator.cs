@@ -9,6 +9,7 @@ public sealed class GetVehiclesQueryValidator : AbstractValidator<GetVehiclesQue
     {
         RuleFor(x => x.Limit).ValidLimit();
         RuleFor(x => x.Offset).ValidOffset();
-        RuleFor(x => x.RegistrationNumber).ValidRegistrationNumberOptional();
+        RuleFor(x => x.RegistrationNumber)
+            .ValidRegistrationNumberOptional();
     }
 }

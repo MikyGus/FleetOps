@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using System.Linq.Expressions;
 
 namespace FleetOps.Application.Validations;
@@ -8,7 +9,8 @@ public static class DateValidationExtensions
     public static IRuleBuilderOptionsConditions<T, T> ValidDateOrder<T>(
         this IRuleBuilderInitial<T, T> ruleBuilder,
         Expression<Func<T, DateTimeOffset?>> fromExpression,
-        Expression<Func<T, DateTimeOffset?>> toExpression)
+        Expression<Func<T, DateTimeOffset?>> toExpression,
+        string errorCode)
     {
         Func<T, DateTimeOffset?> fromSelector = fromExpression.Compile();
         Func<T, DateTimeOffset?> toSelector = toExpression.Compile();
@@ -23,8 +25,19 @@ public static class DateValidationExtensions
 
             if (from.HasValue && to.HasValue && from >= to)
             {
-                context.AddFailure(fromName, $"{fromName} must be earlier than {toName}.");
-                context.AddFailure(toName, $"{toName} must be later than {fromName}.");
+                context.AddFailure(new ValidationFailure(
+                    fromName, 
+                    $"{fromName} must be earlier than {toName}.")
+                {
+                    ErrorCode = errorCode
+                });
+
+                context.AddFailure(new ValidationFailure(
+                    toName,
+                    $"{toName} must be later than {fromName}.")
+                {
+                    ErrorCode = errorCode
+                });
             }
         });
     }
@@ -32,7 +45,8 @@ public static class DateValidationExtensions
     public static IRuleBuilderOptionsConditions<T, T> ValidDateOrder<T>(
         this IRuleBuilderInitial<T, T> ruleBuilder,
         Expression<Func<T, DateTimeOffset>> fromExpression,
-        Expression<Func<T, DateTimeOffset>> toExpression)
+        Expression<Func<T, DateTimeOffset>> toExpression,
+        string errorCode)
     {
         Func<T, DateTimeOffset> fromSelector = fromExpression.Compile();
         Func<T, DateTimeOffset> toSelector = toExpression.Compile();
@@ -47,8 +61,19 @@ public static class DateValidationExtensions
 
             if (from >= to)
             {
-                context.AddFailure(fromName, $"{fromName} must be earlier than {toName}.");
-                context.AddFailure(toName, $"{toName} must be later than {fromName}.");
+                context.AddFailure(new ValidationFailure(
+                    fromName, 
+                    $"{fromName} must be earlier than {toName}.")
+                {
+                    ErrorCode = errorCode
+                });
+
+                context.AddFailure(new ValidationFailure(
+                    toName,
+                    $"{toName} must be later than {fromName}.")
+                {
+                    ErrorCode = errorCode
+                });
             }
         });
     }
