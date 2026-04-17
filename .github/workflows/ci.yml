@@ -29,7 +29,7 @@ jobs:
           --health-cmd="pg_isready -U fleetops -d fleetops_test"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5s
+          --health-retries=5
 
     env:
       ConnectionsStrings__Postgres: Host=localhost;Port=5432;Database=fleetops_test;Username=fleetops;Password=fleetops
