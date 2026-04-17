@@ -7,7 +7,7 @@ public static class TestConfiguration
     private static readonly IConfigurationRoot Configuration = 
         new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
-            .AddJsonFile("appsettings.Testing.json", optional: false)
+            .AddJsonFile("appsettings.Testing.json", optional: true)
             .AddEnvironmentVariables()
             .Build();
 

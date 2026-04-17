@@ -16,6 +16,24 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: fleetops_test
+          POSTGRES_USER: fleetops
+          POSTGRES_PASSWORD: fleetops
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U fleetops -d fleetops_test"
+          --health-intervals=10s
+          --health-timeout=5s
+          --health-retries=5s
+
+    env:
+      ConnectionsStrings__Postgres: Host=localhost;Port=5432;Database=fleetops_test;Username=fleetops;Password=fleetops
+
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -32,6 +50,12 @@ jobs:
 
       - name: Build
         run: dotnet build FleetOps.sln --no-restore --configuration Release
+
+      - name: Install dotnet-ef
+        run: dotnet tool restore
+
+      - name: Apply database migrations
+        run: dotnet ef database update --project ./src/FleetOps.Infrastructure --startup-project ./src/FleetOps.Api
 
       - name: Test
         run: dotnet test FleetOps.sln --no-build --configuration Release
