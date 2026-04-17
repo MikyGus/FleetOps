@@ -32,7 +32,7 @@ jobs:
           --health-retries=5
 
     env:
-      ConnectionsStrings__Postgres: Host=localhost;Port=5432;Database=fleetops_test;Username=fleetops;Password=fleetops
+      ConnectionStrings__Postgres: Host=localhost;Port=5432;Database=fleetops_test;Username=fleetops;Password=fleetops
 
     steps:
       - name: Checkout
