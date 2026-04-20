@@ -2,43 +2,41 @@ using System.Net;
 using System.Net.Http.Json;
 using FleetOps.Tests.Integration.Infrastructure.Database;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
+using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
-using Xunit.Abstractions;
 
 namespace FleetOps.Tests.Integration.Application.Assignments;
 
 public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppFactory>, IAsyncLifetime
 {
     private readonly HttpClient _client;
-    private readonly ITestOutputHelper _output;
-    private readonly TestDatabaseCleaner _databaseCleaner = new();
+    private TestDatabaseSeeder _dbSeeder;
 
-    private readonly (DateTimeOffset Start, DateTimeOffset End) _validTimeUtc = 
+    private static readonly (DateTimeOffset Start, DateTimeOffset End) _validTimeUtc = 
         (
             new DateTimeOffset(2026, 4, 5, 10, 0, 0, TimeSpan.Zero),
             new DateTimeOffset(2026, 4, 5, 11, 0, 0, TimeSpan.Zero)
         );
 
-    public CreateAssignmentTests(
-        IntegrationTestWebAppFactory factory,
-        ITestOutputHelper output)
+    public CreateAssignmentTests(IntegrationTestWebAppFactory factory)
     {
         _client = factory.CreateClient();
-        _output = output;
+       _dbSeeder = new TestDatabaseSeeder(factory.Services.GetRequiredService<IServiceScopeFactory>());
     }
 
-    public async Task InitializeAsync() 
-        => await _databaseCleaner.ResetAsync();
+    public async Task InitializeAsync() => await TestDatabaseCleaner.ResetAsync();
 
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task Should_return_400_when_driver_does_not_exist()
     {
+        var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1", true);
+
         var request = new
         {
           driverId = Guid.NewGuid(),
-          vehicleId = Guid.NewGuid(),
+          vehicleId = vehicleId,
           startUtc =  _validTimeUtc.Start,
           endUtc = _validTimeUtc.End
         };
@@ -51,9 +49,11 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     [Fact]
     public async Task Should_return_400_when_vehicle_does_not_exist()
     {
+        var driverId = await _dbSeeder.SeedDriver("Driver1");
+
         var request = new
         {
-            driverId = Guid.NewGuid(),
+            driverId = driverId,
             vehicleId = Guid.NewGuid(),
             startUtc = _validTimeUtc.Start,
             endUtc = _validTimeUtc.End

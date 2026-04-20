@@ -2,9 +2,9 @@ using Npgsql;
 
 namespace FleetOps.Tests.Integration.Infrastructure.Database;
 
-public sealed class TestDatabaseCleaner
+public static class TestDatabaseCleaner
 {
-    public async Task ResetAsync()
+    public static async Task ResetAsync()
     {
         await using var connection = new NpgsqlConnection(TestConfiguration.PostgresConnectionString);
         await connection.OpenAsync();
