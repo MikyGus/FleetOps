@@ -12,12 +12,6 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     private readonly HttpClient _client;
     private TestDatabaseSeeder _dbSeeder;
 
-    private static readonly (DateTimeOffset Start, DateTimeOffset End) _validTimeUtc = 
-        (
-            new DateTimeOffset(2026, 4, 5, 10, 0, 0, TimeSpan.Zero),
-            new DateTimeOffset(2026, 4, 5, 11, 0, 0, TimeSpan.Zero)
-        );
-
     public CreateAssignmentTests(IntegrationTestWebAppFactory factory)
     {
         _client = factory.CreateClient();
@@ -36,9 +30,9 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var request = new
         {
           driverId = Guid.NewGuid(),
-          vehicleId = vehicleId,
-          startUtc =  _validTimeUtc.Start,
-          endUtc = _validTimeUtc.End
+          vehicleId,
+          startUtc =  TimeTestFixtures.Period1.Start,
+          endUtc = TimeTestFixtures.Period1.End_Valid
         };
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
@@ -53,14 +47,183 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         var request = new
         {
-            driverId = driverId,
+            driverId,
             vehicleId = Guid.NewGuid(),
-            startUtc = _validTimeUtc.Start,
-            endUtc = _validTimeUtc.End
+          startUtc =  TimeTestFixtures.Period1.Start,
+          endUtc = TimeTestFixtures.Period1.End_Valid
         };
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Should_return_400_when_endtime_is_before_starttime()
+    {
+        var driverId = await _dbSeeder.SeedDriver("Driver");
+        var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1");
+
+        var request = new
+        {
+            driverId,
+            vehicleId,
+            startUtc = TimeTestFixtures.Period1.Start,
+            endUtc = TimeTestFixtures.Period1.End_Invalid_BeforeStart
+        };
+
+        var response = await _client.PostAsJsonAsync("/assignments", request);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Should_return_409_when_driver_has_overlapping_assignments()
+    {
+        // Arrange
+        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
+        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
+        var vehicle2Id = await _dbSeeder.SeedVehicle("Vehicle2");
+
+        var assignment1 = new
+        {
+            driverId = driver1Id,
+            vehicleId = vehicle1Id,
+            startUtc =  TimeTestFixtures.Period1.Start,
+            endUtc = TimeTestFixtures.Period1.End_Valid
+        };
+        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+
+        // Act
+        var request = new
+        {
+            driverId = driver1Id,
+            vehicleId = vehicle2Id,
+            startUtc = TimeTestFixtures.Period2.Start_Invalid_ConflictWithPeriod1,
+            endUtc = TimeTestFixtures.Period2.End_Valid
+        };
+
+        var response = await _client.PostAsJsonAsync("/assignments", request);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task Should_return_409_when_vehicle_has_overlapping_assignments()
+    {
+        // Arrange
+        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
+        var driver2Id = await _dbSeeder.SeedDriver("Driver2");
+        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
+
+        var assignment1 = new
+        {
+            driverId = driver1Id,
+            vehicleId = vehicle1Id,
+            startUtc = TimeTestFixtures.Period1.Start,
+            endUtc = TimeTestFixtures.Period1.End_Valid
+        };
+
+        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+
+        // Act
+        var request = new
+        {
+            driverId = driver2Id,
+            vehicleId = vehicle1Id,
+            startUtc = TimeTestFixtures.Period2.Start_Invalid_ConflictWithPeriod1,
+            endUtc = TimeTestFixtures.Period2.End_Valid
+        };
+
+        var response = await _client.PostAsJsonAsync("/assignments", request);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+    }
+
+    [Fact]
+    public async Task Should_return_201_when_assignments_time_overlaps_but_driver_and_vehicle_are_different()
+    {
+        // Arrange
+        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
+        var driver2Id = await _dbSeeder.SeedDriver("Driver2");
+        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
+        var vehicle2Id = await _dbSeeder.SeedVehicle("Vehicle2");
+
+        var assignment1 = new
+        {
+            driverId = driver1Id,
+            vehicleId = vehicle1Id,
+            startUtc = TimeTestFixtures.Period1.Start,
+            endUtc = TimeTestFixtures.Period1.End_Valid
+        };
+
+        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+
+        // Act
+        var request = new
+        {
+            driverId = driver2Id,
+            vehicleId = vehicle2Id,
+            startUtc = TimeTestFixtures.Period2.Start_Invalid_ConflictWithPeriod1,
+            endUtc = TimeTestFixtures.Period2.End_Valid
+        };
+
+        var response = await _client.PostAsJsonAsync("/assignments", request);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task Should_return_201_when_assignments_are_back_to_back_for_the_same_driver_and_vehicle()
+    {
+        // Arrange
+        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
+        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
+
+        var assignment1 = new
+        {
+            driverId = driver1Id,
+            vehicleId = vehicle1Id,
+            startUtc = TimeTestFixtures.Period1.Start,
+            endUtc = TimeTestFixtures.Period1.End_Valid
+        };
+
+        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+
+        // Act
+        var request = new
+        {
+            driverId = driver1Id,
+            vehicleId = vehicle1Id,
+            startUtc = TimeTestFixtures.Period2.Start_Valid_Back2BackWithPeriod1End,
+            endUtc = TimeTestFixtures.Period2.End_Valid
+        };
+
+        var response = await _client.PostAsJsonAsync("/assignments", request);
+
+        // Assert
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+    }
+
+    [Fact]
+    public async Task Should_return_201_when_input_is_valid()
+    {
+        var driverId = await _dbSeeder.SeedDriver("Driver1");
+        var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1");
+
+        var request = new
+        {
+            driverId,
+            vehicleId,
+            startUtc =  TimeTestFixtures.Period1.Start,
+            endUtc = TimeTestFixtures.Period1.End_Valid
+        };
+
+        var response = await _client.PostAsJsonAsync("/assignments", request);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
     }
 }
