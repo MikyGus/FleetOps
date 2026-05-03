@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FleetOps.Tests.Integration.Infrastructure.Database;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
+using FleetOps.Tests.Integration.Infrastructure.Scenarios;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
 
@@ -27,13 +28,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     {
         var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1", true);
 
-        var request = new
-        {
-          driverId = Guid.NewGuid(),
-          vehicleId,
-          startUtc =  TimeTestFixtures.Period1.Start,
-          endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var request = AssignmentRequestBuilder.WithMissingDriver(vehicleId).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -45,13 +40,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     {
         var driverId = await _dbSeeder.SeedDriver("Driver1");
 
-        var request = new
-        {
-            driverId,
-            vehicleId = Guid.NewGuid(),
-          startUtc =  TimeTestFixtures.Period1.Start,
-          endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var request = AssignmentRequestBuilder.WithMissingVehicle(driverId).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -64,13 +53,10 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var driverId = await _dbSeeder.SeedDriver("Driver");
         var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1");
 
-        var request = new
-        {
-            driverId,
-            vehicleId,
-            startUtc = TimeTestFixtures.Period1.Start,
-            endUtc = TimeTestFixtures.Period1.End_Invalid_BeforeStart
-        };
+        var request = AssignmentRequestBuilder
+            .For(driverId, vehicleId)
+            .WithEndBeforeStart()
+            .Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -85,24 +71,11 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
         var vehicle2Id = await _dbSeeder.SeedVehicle("Vehicle2");
 
-        var assignment1 = new
-        {
-            driverId = driver1Id,
-            vehicleId = vehicle1Id,
-            startUtc =  TimeTestFixtures.Period1.Start,
-            endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
         _ = await _client.PostAsJsonAsync("/assignments", assignment1);
 
         // Act
-        var request = new
-        {
-            driverId = driver1Id,
-            vehicleId = vehicle2Id,
-            startUtc = TimeTestFixtures.Period2.Start_Invalid_ConflictWithPeriod1,
-            endUtc = TimeTestFixtures.Period2.End_Valid
-        };
-
+        var request = AssignmentRequestBuilder.For(driver1Id, vehicle2Id).OverlappingPeriod1().Build();
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         // Assert
@@ -117,24 +90,13 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var driver2Id = await _dbSeeder.SeedDriver("Driver2");
         var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
 
-        var assignment1 = new
-        {
-            driverId = driver1Id,
-            vehicleId = vehicle1Id,
-            startUtc = TimeTestFixtures.Period1.Start,
-            endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
 
         _ = await _client.PostAsJsonAsync("/assignments", assignment1);
 
         // Act
-        var request = new
-        {
-            driverId = driver2Id,
-            vehicleId = vehicle1Id,
-            startUtc = TimeTestFixtures.Period2.Start_Invalid_ConflictWithPeriod1,
-            endUtc = TimeTestFixtures.Period2.End_Valid
-        };
+        var request = AssignmentRequestBuilder
+            .For(driver2Id, vehicle1Id).OverlappingPeriod1().Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -151,24 +113,15 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
         var vehicle2Id = await _dbSeeder.SeedVehicle("Vehicle2");
 
-        var assignment1 = new
-        {
-            driverId = driver1Id,
-            vehicleId = vehicle1Id,
-            startUtc = TimeTestFixtures.Period1.Start,
-            endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
 
         _ = await _client.PostAsJsonAsync("/assignments", assignment1);
 
         // Act
-        var request = new
-        {
-            driverId = driver2Id,
-            vehicleId = vehicle2Id,
-            startUtc = TimeTestFixtures.Period2.Start_Invalid_ConflictWithPeriod1,
-            endUtc = TimeTestFixtures.Period2.End_Valid
-        };
+        var request = AssignmentRequestBuilder
+            .For(driver2Id, vehicle2Id)
+            .OverlappingPeriod1()
+            .Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -183,24 +136,13 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var driver1Id = await _dbSeeder.SeedDriver("Driver1");
         var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
 
-        var assignment1 = new
-        {
-            driverId = driver1Id,
-            vehicleId = vehicle1Id,
-            startUtc = TimeTestFixtures.Period1.Start,
-            endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
 
         _ = await _client.PostAsJsonAsync("/assignments", assignment1);
 
         // Act
-        var request = new
-        {
-            driverId = driver1Id,
-            vehicleId = vehicle1Id,
-            startUtc = TimeTestFixtures.Period2.Start_Valid_Back2BackWithPeriod1End,
-            endUtc = TimeTestFixtures.Period2.End_Valid
-        };
+        var request = AssignmentRequestBuilder
+            .For(driver1Id, vehicle1Id).BackToBackAfterPeriod1().Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -214,13 +156,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var driverId = await _dbSeeder.SeedDriver("Driver1");
         var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1");
 
-        var request = new
-        {
-            driverId,
-            vehicleId,
-            startUtc =  TimeTestFixtures.Period1.Start,
-            endUtc = TimeTestFixtures.Period1.End_Valid
-        };
+        var request = AssignmentRequestBuilder.For(driverId, vehicleId).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
