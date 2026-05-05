@@ -23,9 +23,4 @@ public static class IdentifierValidationExtensions
                 .WithMessage("{PropertyName} does not exist.")
                 .WithErrorCode(notfoundErrorCode);
     }
-
-    public static IRuleBuilderOptions<T, Guid> ValidRequiredId<T>(this IRuleBuilder<T, Guid> ruleBuilder)
-        => ruleBuilder
-            .NotEmpty()
-            .WithMessage("{PropertyName} must not be a non-empty GUID.");
 }

@@ -39,11 +39,13 @@ public sealed class ExceptionHandlingMiddleware
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
         context.Response.ContentType = "application/json";
 
-        Dictionary<string, string[]> details = ex.Errors
+        Dictionary<string, ErrorDetail[]> details = ex.Errors
             .GroupBy(x => x.PropertyName)
             .ToDictionary(
                 g => g.Key,
-                g => g.Select(x => x.ErrorMessage).ToArray());
+                g => g.Select(x => new ErrorDetail(
+                    x.ErrorCode,
+                    x.ErrorMessage)).ToArray());
 
         var response = new ErrorResponse(
             "validation_error",
