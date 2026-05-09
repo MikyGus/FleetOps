@@ -1,4 +1,6 @@
 using FleetOps.Api.Contracts;
+using FleetOps.Domain.Errors;
+using FleetOps.Domain.Exceptions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -24,6 +26,10 @@ public sealed class ExceptionHandlingMiddleware
         {
             await HandleValidationException(context, ex);
         }
+        catch (DomainValidationException ex)
+        {
+            await HandleDomainValidationException(context, ex);
+        }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx)
         {
             await HandlePostgresException(context, pgEx);
@@ -34,20 +40,41 @@ public sealed class ExceptionHandlingMiddleware
         }
     }
 
+    private async Task HandleDomainValidationException(HttpContext context, DomainValidationException ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        context.Response.ContentType = "application/json";
+
+        var response = new ErrorResponse(
+            ApiErrorCodes.ValidationError.ErrorCode,
+            ApiErrorCodes.ValidationError.Message,
+            new ()
+            {
+                { 
+                    ex.PropertyName, 
+                    [ new ErrorDetail(ex.ErrorCode, ex.Message) ] 
+                }
+            });
+
+        await context.Response.WriteAsJsonAsync(response);
+    }
+
     private static async Task HandleValidationException(HttpContext context, ValidationException ex)
     {
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
         context.Response.ContentType = "application/json";
 
-        Dictionary<string, string[]> details = ex.Errors
+        Dictionary<string, ErrorDetail[]> details = ex.Errors
             .GroupBy(x => x.PropertyName)
             .ToDictionary(
                 g => g.Key,
-                g => g.Select(x => x.ErrorMessage).ToArray());
+                g => g.Select(x => new ErrorDetail(
+                    x.ErrorCode,
+                    x.ErrorMessage)).ToArray());
 
         var response = new ErrorResponse(
-            "validation_error",
-            "One or more validation errors occurred.",
+            ApiErrorCodes.ValidationError.ErrorCode,
+            ApiErrorCodes.ValidationError.Message,
             details);
 
         await context.Response.WriteAsJsonAsync(response);
@@ -64,29 +91,62 @@ public sealed class ExceptionHandlingMiddleware
             case "ex_assignments_driver_no_overlap":
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
                 response = new ErrorResponse(
-                    "driver_overlap",
-                    "Driver already has an assignment during this time period.");
+                    ApiErrorCodes.ValidationError.ErrorCode,
+                    ApiErrorCodes.ValidationError.Message,
+                    new ()
+                    {
+                        { "DriverId", 
+                        [new ErrorDetail(
+                            ErrorCodes.Assignment.DriverId.Overlap,
+                            "Driver already has an assignment during this time period.")] 
+                        }
+                    });
                 break;
 
             case "ex_assignments_vehicle_no_overlap":
                 context.Response.StatusCode = StatusCodes.Status409Conflict;
                 response = new ErrorResponse(
-                    "vehicle_overlap",
-                    "Vehicle already has an assignment during this time period.");
+                    ApiErrorCodes.ValidationError.ErrorCode,
+                    ApiErrorCodes.ValidationError.Message,
+                    new ()
+                    {
+                        { "VehicleId", 
+                        [new ErrorDetail(
+                            ErrorCodes.Assignment.VehicleId.Overlap,
+                            "Vehicle already has an assignment during this time period.")] 
+                        }
+                    });                
                 break;
 
             case "ck_assignments_time":
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
                 response = new ErrorResponse(
-                    "invalid_time_range",
-                    "EndUtc must be greater than StartUtc");
+                    ApiErrorCodes.ValidationError.ErrorCode,
+                    ApiErrorCodes.ValidationError.Message,
+                    new ()
+                    {
+                        { 
+                            "startUtc", [new ErrorDetail(ErrorCodes.Assignment.TimeRange.Invalid,"StartUtc must be earlier than EndUtc.")]
+                        },
+                        {
+                            "endUtc", [new ErrorDetail(ErrorCodes.Assignment.TimeRange.Invalid,"EndUtc must be later than StartUtc.")] 
+                        }
+                    });      
                 break;
 
             default:
                 context.Response.StatusCode = StatusCodes.Status500InternalServerError;
                 response = new ErrorResponse(
-                    "database_error",
-                    "An unexpected database error occurred.");
+                    ApiErrorCodes.ServerError.ErrorCode,
+                    ApiErrorCodes.ServerError.Message,
+                    new ()
+                    {
+                        { ApiErrorCodes.ServerError.ErrorCode, 
+                        [new ErrorDetail(
+                            ApiErrorCodes.ServerError.ErrorCode,
+                            ApiErrorCodes.ServerError.Message)] 
+                        }
+                    }); 
                 break;
         }
 
@@ -99,8 +159,16 @@ public sealed class ExceptionHandlingMiddleware
         context.Response.ContentType = "application/json";
 
         var response = new ErrorResponse(
-            "internal_server_error",
-            "An unexpected error occurred.");
+            ApiErrorCodes.ServerError.ErrorCode,
+            ApiErrorCodes.ServerError.Message,
+            new ()
+            {
+                { ApiErrorCodes.ServerError.ErrorCode, 
+                [new ErrorDetail(
+                    ApiErrorCodes.ServerError.ErrorCode,
+                    ApiErrorCodes.ServerError.Message)] 
+                }
+            }); 
 
         await context.Response.WriteAsJsonAsync(response);
     }

@@ -1,4 +1,6 @@
 using FleetOps.Domain.Assignments;
+using FleetOps.Domain.Errors;
+using FleetOps.Domain.Exceptions;
 
 namespace FleetOps.Domain.Drivers;
 
@@ -18,7 +20,7 @@ public sealed class Driver
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Name must be provided.", nameof(name));
+            throw new DomainValidationException(nameof(name), ErrorCodes.Driver.Name.Required, "Name must be provided.");
         }
 
         Name = name.Trim();

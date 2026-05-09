@@ -1,4 +1,5 @@
 using FleetOps.Application.Validations;
+using FleetOps.Domain.Errors;
 using FluentValidation;
 
 namespace FleetOps.Application.Assignments.GetAssignments;
@@ -12,6 +13,6 @@ public sealed class GetAssignmentsQueryValidator : AbstractValidator<GetAssignme
         RuleFor(x => x.Offset).ValidOffset();
 
         RuleFor(x => x).ValidDateOrder(x => x.FromUtc, x => x.ToUtc,
-            ValidationErrorCodes.Assignment.TimeRange.Invalid);
+            ErrorCodes.Assignment.TimeRange.Invalid);
     }
 }

@@ -1,7 +1,7 @@
 using FluentValidation;
 using FluentValidation.TestHelper;
 using FleetOps.Application.Validations;
-using System.Threading.Tasks;
+using FleetOps.Domain.Errors;
 
 namespace FleetOps.Tests.Unit.Application.Common.Validation;
 
@@ -27,7 +27,7 @@ public sealed class PaginationValidationTests
         var result = await _validator.TestValidateAsync(model);
 
         result.ShouldHaveValidationErrorFor(x => x.Limit)
-            .WithErrorCode(ValidationErrorCodes.Pagination.Limit.Invalid);
+            .WithErrorCode(ErrorCodes.Pagination.Limit.Invalid);
     }
 
     [Fact]
@@ -38,7 +38,7 @@ public sealed class PaginationValidationTests
         var result = await _validator.TestValidateAsync(model);
 
         result.ShouldHaveValidationErrorFor(x => x.Limit)
-            .WithErrorCode(ValidationErrorCodes.Pagination.Limit.Invalid);
+            .WithErrorCode(ErrorCodes.Pagination.Limit.Invalid);
     }
 
     [Fact]
@@ -69,7 +69,7 @@ public sealed class PaginationValidationTests
         var result = await _validator.TestValidateAsync(model);
 
         result.ShouldHaveValidationErrorFor(x => x.Offset)
-            .WithErrorCode(ValidationErrorCodes.Pagination.Offset.Invalid);
+            .WithErrorCode(ErrorCodes.Pagination.Offset.Invalid);
     }
 
     [Fact]

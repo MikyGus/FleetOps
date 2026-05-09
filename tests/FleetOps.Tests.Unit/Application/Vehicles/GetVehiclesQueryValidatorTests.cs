@@ -1,5 +1,5 @@
-using FleetOps.Application.Validations;
 using FleetOps.Application.Vehicles.GetVehicles;
+using FleetOps.Domain.Errors;
 using FleetOps.Tests.Unit.Application.Common.Validation;
 using FluentValidation.TestHelper;
 
@@ -17,7 +17,7 @@ public sealed class GetVehiclesQueryValidatorTests
         var result = await _validator.TestValidateAsync(query);
 
         result.ShouldHaveValidationErrorFor(x => x.RegistrationNumber)
-            .WithErrorCode(ValidationErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
+            .WithErrorCode(ErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
     }
 
     [Fact]
@@ -44,7 +44,7 @@ public sealed class GetVehiclesQueryValidatorTests
     {
         var query = new GetVehiclesQuery(null, null, 1000, 0);
 
-        await ValidationAssert.HasError(_validator, query, x => x.Limit, ValidationErrorCodes.Pagination.Limit.Invalid);
+        await ValidationAssert.HasError(_validator, query, x => x.Limit, ErrorCodes.Pagination.Limit.Invalid);
     }
 
     [Fact]
@@ -52,6 +52,6 @@ public sealed class GetVehiclesQueryValidatorTests
     {
         var query = new GetVehiclesQuery(null, null, 50, -1);
 
-        await ValidationAssert.HasError(_validator, query, x => x.Offset, ValidationErrorCodes.Pagination.Offset.Invalid);
+        await ValidationAssert.HasError(_validator, query, x => x.Offset, ErrorCodes.Pagination.Offset.Invalid);
     }
 }

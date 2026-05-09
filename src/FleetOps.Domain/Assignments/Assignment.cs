@@ -1,4 +1,6 @@
 using FleetOps.Domain.Drivers;
+using FleetOps.Domain.Errors;
+using FleetOps.Domain.Exceptions;
 using FleetOps.Domain.Vehicles;
 
 namespace FleetOps.Domain.Assignments;
@@ -21,9 +23,12 @@ public sealed class Assignment
 
     public Assignment(Guid driverId, Guid vehicleId, DateTimeOffset startUtc, DateTimeOffset endUtc)
     {
-        if (driverId == Guid.Empty) throw new ArgumentException("DriverId must be set.", nameof(driverId));
-        if (vehicleId == Guid.Empty) throw new ArgumentException("VehicleId must be set.", nameof(vehicleId));
-        if (endUtc <= startUtc) throw new ArgumentException("EndUtc must be greater than StartUtc.", nameof(endUtc));
+        if (driverId == Guid.Empty) 
+            throw new DomainValidationException(nameof(driverId), ErrorCodes.Assignment.DriverId.Required, "DriverId must be set.");
+        if (vehicleId == Guid.Empty) 
+            throw new DomainValidationException(nameof(vehicleId), ErrorCodes.Assignment.VehicleId.Required, "VehicleId must be set.");
+        if (endUtc <= startUtc) 
+            throw new DomainValidationException(nameof(endUtc), ErrorCodes.Assignment.TimeRange.Invalid, "EndUtc must be greater than StartUtc.");
 
         DriverId = driverId;
         VehicleId = vehicleId;

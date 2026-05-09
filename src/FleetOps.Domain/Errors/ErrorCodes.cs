@@ -1,6 +1,6 @@
-namespace FleetOps.Application.Validations;
+namespace FleetOps.Domain.Errors;
 
-public static class ValidationErrorCodes
+public static class ErrorCodes
 {
     public static class Assignment
     {
@@ -8,12 +8,14 @@ public static class ValidationErrorCodes
         {
             public const string Required = "Assignment.DriverId.Required";
             public const string NotFound = "Assignment.DriverId.NotFound";
+            public const string Overlap = "Assignment.DriverId.Overlap";
         }
 
         public static class VehicleId
         {
             public const string Required = "Assignment.VehicleId.Required";
             public const string NotFound = "Assignment.VehicleId.NotFound";
+            public const string Overlap = "Assignment.VehicleId.Overlap";
         }
 
         public static class TimeRange

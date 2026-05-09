@@ -1,5 +1,6 @@
 using FleetOps.Application.Validations;
 using FleetOps.Domain.Drivers;
+using FleetOps.Domain.Errors;
 using FleetOps.Domain.Vehicles;
 using FluentValidation;
 
@@ -14,17 +15,17 @@ public sealed class CreateAssignmentCommandValidator : AbstractValidator<CreateA
         RuleFor(x => x.DriverId).ValidateEntityExists(
             driverExistenceChecker,
             "Driver",
-            ValidationErrorCodes.Assignment.DriverId.Required,
-            ValidationErrorCodes.Assignment.DriverId.NotFound);
+            ErrorCodes.Assignment.DriverId.Required,
+            ErrorCodes.Assignment.DriverId.NotFound);
 
         RuleFor(x => x.VehicleId).ValidateEntityExists(
             vehicleExistenceChecker,
             "Vehicle",
-            ValidationErrorCodes.Assignment.VehicleId.Required,
-            ValidationErrorCodes.Assignment.VehicleId.NotFound);
+            ErrorCodes.Assignment.VehicleId.Required,
+            ErrorCodes.Assignment.VehicleId.NotFound);
 
         RuleFor(x => x)
             .ValidDateOrder(x => x.StartUtc, x => x.EndUtc,
-                ValidationErrorCodes.Assignment.TimeRange.Invalid);
+                ErrorCodes.Assignment.TimeRange.Invalid);
     }
 }

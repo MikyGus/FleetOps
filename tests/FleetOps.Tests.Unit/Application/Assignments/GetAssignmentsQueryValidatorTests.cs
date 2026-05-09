@@ -1,6 +1,5 @@
-using System.Threading.Tasks;
 using FleetOps.Application.Assignments.GetAssignments;
-using FleetOps.Application.Validations;
+using FleetOps.Domain.Errors;
 using FleetOps.Tests.Unit.Application.Common.Validation;
 using FluentValidation.TestHelper;
 
@@ -26,9 +25,9 @@ public sealed class GetAssignmentsQueryValidatorTests()
         var result = await _validator.TestValidateAsync(query);
 
         result.ShouldHaveValidationErrorFor(x => x.FromUtc)
-            .WithErrorCode(ValidationErrorCodes.Assignment.TimeRange.Invalid);
+            .WithErrorCode(ErrorCodes.Assignment.TimeRange.Invalid);
         result.ShouldHaveValidationErrorFor(x => x.ToUtc)
-            .WithErrorCode(ValidationErrorCodes.Assignment.TimeRange.Invalid);
+            .WithErrorCode(ErrorCodes.Assignment.TimeRange.Invalid);
     }
 
     [Fact]
@@ -45,7 +44,7 @@ public sealed class GetAssignmentsQueryValidatorTests()
     {
         var query = new GetAssignmentsQuery(null, null, null, null, 1000, 0);
 
-        await ValidationAssert.HasError(_validator, query, x => x.Limit, ValidationErrorCodes.Pagination.Limit.Invalid);
+        await ValidationAssert.HasError(_validator, query, x => x.Limit, ErrorCodes.Pagination.Limit.Invalid);
     }
 
     [Fact]
@@ -53,6 +52,6 @@ public sealed class GetAssignmentsQueryValidatorTests()
     {
         var query = new GetAssignmentsQuery(null, null, null, null, 50, -1);
 
-        await ValidationAssert.HasError(_validator, query, x => x.Offset, ValidationErrorCodes.Pagination.Offset.Invalid);
+        await ValidationAssert.HasError(_validator, query, x => x.Offset, ErrorCodes.Pagination.Offset.Invalid);
     }
 }

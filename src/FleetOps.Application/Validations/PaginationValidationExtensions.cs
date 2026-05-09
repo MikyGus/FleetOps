@@ -1,3 +1,4 @@
+using FleetOps.Domain.Errors;
 using FluentValidation;
 
 namespace FleetOps.Application.Validations;
@@ -8,11 +9,11 @@ public static class PaginationValidationExtensions
         => ruleBuilder
             .InclusiveBetween(ValidationConstants.Pagination.MinPageSize, ValidationConstants.Pagination.MaxPageSize)
             .WithMessage("{PropertyName} must be between {From} and {To}.")
-            .WithErrorCode(ValidationErrorCodes.Pagination.Limit.Invalid);
+            .WithErrorCode(ErrorCodes.Pagination.Limit.Invalid);
 
     public static IRuleBuilderOptions<T, int> ValidOffset<T>(this IRuleBuilder<T, int> ruleBuilder) 
         => ruleBuilder
             .GreaterThanOrEqualTo(0)
             .WithMessage("{PropertyName} must be greater than or equal to {ComparisonValue}.")
-            .WithErrorCode(ValidationErrorCodes.Pagination.Offset.Invalid);
+            .WithErrorCode(ErrorCodes.Pagination.Offset.Invalid);
 }

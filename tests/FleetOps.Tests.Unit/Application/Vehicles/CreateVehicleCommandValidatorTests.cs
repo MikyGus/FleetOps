@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
 using FleetOps.Application.Validations;
 using FleetOps.Application.Vehicles.CreateVehicle;
+using FleetOps.Domain.Errors;
 using FluentValidation.TestHelper;
 
 namespace FleetOps.Tests.Unit.Application.Vehicles;
@@ -17,7 +17,7 @@ public sealed class CreateVehicleCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.RegistrationNumber)
-            .WithErrorCode(ValidationErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
+            .WithErrorCode(ErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
     }
 
     [Fact]
@@ -28,7 +28,7 @@ public sealed class CreateVehicleCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.RegistrationNumber)
-            .WithErrorCode(ValidationErrorCodes.Vehicle.RegistrationNumber.Required);
+            .WithErrorCode(ErrorCodes.Vehicle.RegistrationNumber.Required);
     }
 
     [Fact]

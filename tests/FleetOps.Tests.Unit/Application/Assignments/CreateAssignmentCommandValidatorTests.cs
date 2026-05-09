@@ -1,7 +1,7 @@
-using System.Threading.Tasks;
 using FleetOps.Application.Assignments.CreateAssignment;
 using FleetOps.Application.Validations;
 using FleetOps.Domain.Drivers;
+using FleetOps.Domain.Errors;
 using FleetOps.Domain.Vehicles;
 using FluentValidation.TestHelper;
 using Moq;
@@ -42,7 +42,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.DriverId)
-            .WithErrorCode(ValidationErrorCodes.Assignment.DriverId.Required);
+            .WithErrorCode(ErrorCodes.Assignment.DriverId.Required);
     }       
 
     [Fact]
@@ -69,7 +69,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.VehicleId)
-            .WithErrorCode(ValidationErrorCodes.Assignment.VehicleId.Required);
+            .WithErrorCode(ErrorCodes.Assignment.VehicleId.Required);
     }
 
     [Fact]
@@ -95,7 +95,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.DriverId)
-            .WithErrorCode(ValidationErrorCodes.Assignment.DriverId.NotFound);
+            .WithErrorCode(ErrorCodes.Assignment.DriverId.NotFound);
     }             
 
     [Fact]
@@ -121,7 +121,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.VehicleId)
-            .WithErrorCode(ValidationErrorCodes.Assignment.VehicleId.NotFound);
+            .WithErrorCode(ErrorCodes.Assignment.VehicleId.NotFound);
     }
 
     [Fact]
@@ -147,9 +147,9 @@ public sealed class CreateAssignmentCommandValidatorTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.StartUtc)
-            .WithErrorCode(ValidationErrorCodes.Assignment.TimeRange.Invalid);
+            .WithErrorCode(ErrorCodes.Assignment.TimeRange.Invalid);
         result.ShouldHaveValidationErrorFor(x => x.EndUtc)
-            .WithErrorCode(ValidationErrorCodes.Assignment.TimeRange.Invalid);
+            .WithErrorCode(ErrorCodes.Assignment.TimeRange.Invalid);
     }
 
     [Fact]
