@@ -1,4 +1,6 @@
 using FleetOps.Domain.Assignments;
+using FleetOps.Domain.Errors;
+using FleetOps.Domain.Exceptions;
 
 namespace FleetOps.Domain.Vehicles;
 
@@ -18,7 +20,7 @@ public sealed class Vehicle
     {
         if (string.IsNullOrWhiteSpace(registrationnumber))
         {
-            throw new ArgumentException("RegistrationNumber must be provided.", nameof(registrationnumber));
+            throw new DomainValidationException(nameof(registrationnumber), ErrorCodes.Vehicle.RegistrationNumber.Required, "RegistrationNumber must be provided.");
         }
 
         RegistrationNumber = registrationnumber.Trim().ToUpperInvariant();

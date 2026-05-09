@@ -1,4 +1,5 @@
 using FleetOps.Application.Validations;
+using FleetOps.Domain.Errors;
 using FluentValidation;
 
 namespace FleetOps.Application.Drivers.CreateDriver;
@@ -9,8 +10,8 @@ public sealed class CreateDriverCommandValidator : AbstractValidator<CreateDrive
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithErrorCode(ValidationErrorCodes.Driver.Name.Required)
+            .WithErrorCode(ErrorCodes.Driver.Name.Required)
             .WithMessage(ValidationConstants.MessageTemplate.Required)
-            .MaxNameLength(ValidationErrorCodes.Driver.Name.MaxLengthExceeded);
+            .MaxNameLength(ErrorCodes.Driver.Name.MaxLengthExceeded);
     }
 }

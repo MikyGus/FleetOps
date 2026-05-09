@@ -1,3 +1,4 @@
+using FleetOps.Domain.Errors;
 using FluentValidation;
 
 namespace FleetOps.Application.Validations;
@@ -17,15 +18,15 @@ public static class StringValidationExtensions
         => ruleBuilder
             .NotEmpty()
                 .WithMessage(ValidationConstants.MessageTemplate.Required)
-                .WithErrorCode(ValidationErrorCodes.Vehicle.RegistrationNumber.Required)
+                .WithErrorCode(ErrorCodes.Vehicle.RegistrationNumber.Required)
             .MaximumLength(ValidationConstants.RegistrationNumber.MaxLength)
                 .WithMessage(ValidationConstants.RegistrationNumber.MessageTemplate)
-                .WithErrorCode(ValidationErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
+                .WithErrorCode(ErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
     
     public static IRuleBuilderOptions<T, string?> ValidRegistrationNumberOptional<T>(this IRuleBuilder<T, string?> ruleBuilder)
         => ruleBuilder
             .MaximumLength(ValidationConstants.RegistrationNumber.MaxLength)
                 .WithMessage(ValidationConstants.RegistrationNumber.MessageTemplate)
-                .WithErrorCode(ValidationErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
+                .WithErrorCode(ErrorCodes.Vehicle.RegistrationNumber.MaxLengthExceeded);
 
 }
