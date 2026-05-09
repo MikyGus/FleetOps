@@ -1,5 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
+using FleetOps.Api.Contracts;
+using FleetOps.Domain.Errors;
+using FleetOps.Tests.Integration.Contracts.Errors;
 using FleetOps.Tests.Integration.Infrastructure.Database;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 using FleetOps.Tests.Integration.Infrastructure.Scenarios;
@@ -33,6 +36,14 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Content.Headers.ContentType?.MediaType.ShouldStartWith("application/json");
+
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
+        error.Details.ShouldNotBeNull();
+        error.Details.ShouldContainKey("DriverId");
+        error.Details["DriverId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.DriverId.NotFound);
     }
 
     [Fact]
@@ -45,6 +56,14 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Content.Headers.ContentType?.MediaType.ShouldStartWith("application/json");
+
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
+        error.Details.ShouldNotBeNull();
+        error.Details.ShouldContainKey("VehicleId");
+        error.Details["VehicleId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.VehicleId.NotFound);
     }
 
     [Fact]
@@ -61,6 +80,16 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        response.Content.Headers.ContentType?.MediaType.ShouldStartWith("application/json");
+
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
+        error.Details.ShouldNotBeNull();
+        error.Details.ShouldContainKey("StartUtc");
+        error.Details["StartUtc"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.TimeRange.Invalid);
+        error.Details.ShouldContainKey("EndUtc");
+        error.Details["EndUtc"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.TimeRange.Invalid);
     }
 
     [Fact]
@@ -80,6 +109,14 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        response.Content.Headers.ContentType?.MediaType.ShouldStartWith("application/json");
+
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
+        error.Details.ShouldNotBeNull();
+        error.Details.ShouldContainKey("DriverId");
+        error.Details["DriverId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.DriverId.Overlap);        
     }
 
     [Fact]
@@ -102,6 +139,14 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Conflict);
+        response.Content.Headers.ContentType?.MediaType.ShouldStartWith("application/json");
+
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
+        error.ShouldNotBeNull();
+        error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
+        error.Details.ShouldNotBeNull();
+        error.Details.ShouldContainKey("VehicleId");
+        error.Details["VehicleId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.VehicleId.Overlap);    
     }
 
     [Fact]
