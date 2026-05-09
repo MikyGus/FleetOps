@@ -1,5 +1,6 @@
 using FleetOps.Application.Drivers.CreateDriver;
 using FleetOps.Application.Validations;
+using FleetOps.Domain.Errors;
 using FluentValidation.TestHelper;
 
 namespace FleetOps.Tests.Unit.Application.Drivers;
@@ -16,7 +17,7 @@ public sealed class CreateDriverCommandValidationTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.Name)
-            .WithErrorCode(ValidationErrorCodes.Driver.Name.Required);
+            .WithErrorCode(ErrorCodes.Driver.Name.Required);
     }
 
     [Fact]
@@ -27,7 +28,7 @@ public sealed class CreateDriverCommandValidationTests
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.Name)
-            .WithErrorCode(ValidationErrorCodes.Driver.Name.MaxLengthExceeded);
+            .WithErrorCode(ErrorCodes.Driver.Name.MaxLengthExceeded);
     }
 
     [Fact]
