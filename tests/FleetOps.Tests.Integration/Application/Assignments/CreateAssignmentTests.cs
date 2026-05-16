@@ -14,12 +14,12 @@ namespace FleetOps.Tests.Integration.Application.Assignments;
 public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppFactory>, IAsyncLifetime
 {
     private readonly HttpClient _client;
-    private TestDatabaseSeeder _dbSeeder;
+    private DatabaseSeeder _dbSeeder;
 
     public CreateAssignmentTests(IntegrationTestWebAppFactory factory)
     {
         _client = factory.CreateClient();
-       _dbSeeder = new TestDatabaseSeeder(factory.Services.GetRequiredService<IServiceScopeFactory>());
+       _dbSeeder = new DatabaseSeeder(factory.Services.GetRequiredService<IServiceScopeFactory>());
     }
 
     public async Task InitializeAsync() => await TestDatabaseCleaner.ResetAsync();
@@ -29,9 +29,9 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     [Fact]
     public async Task Should_return_400_when_driver_does_not_exist()
     {
-        var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1", true);
+        var seedResult = await _dbSeeder.Seed().SeedVehicle("Vehicle", true).SaveAsync();
 
-        var request = AssignmentRequestBuilder.WithMissingDriver(vehicleId).Build();
+        var request = AssignmentRequestBuilder.WithMissingDriver(seedResult.Vehicles["Vehicle"]).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -49,9 +49,9 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     [Fact]
     public async Task Should_return_400_when_vehicle_does_not_exist()
     {
-        var driverId = await _dbSeeder.SeedDriver("Driver1");
+        var seedResult = await _dbSeeder.Seed().SeedDriver("Driver").SaveAsync();
 
-        var request = AssignmentRequestBuilder.WithMissingVehicle(driverId).Build();
+        var request = AssignmentRequestBuilder.WithMissingVehicle(seedResult.Drivers["Driver"]).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -69,11 +69,13 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     [Fact]
     public async Task Should_return_400_when_endtime_is_before_starttime()
     {
-        var driverId = await _dbSeeder.SeedDriver("Driver");
-        var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1");
+        var seedResult = await _dbSeeder.Seed()
+            .SeedDriver("Driver")
+            .SeedVehicle("Vehicle", true)
+            .SaveAsync();
 
         var request = AssignmentRequestBuilder
-            .For(driverId, vehicleId)
+            .For(seedResult.Drivers["Driver"], seedResult.Vehicles["Vehicle"])
             .WithEndBeforeStart()
             .Build();
 
@@ -96,15 +98,15 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     public async Task Should_return_409_when_driver_has_overlapping_assignments()
     {
         // Arrange
-        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
-        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
-        var vehicle2Id = await _dbSeeder.SeedVehicle("Vehicle2");
-
-        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
-        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+        var seedResult = await _dbSeeder.Seed()
+            .SeedAssignment("Driver1", "Vehicle1", TimeTestFixtures.Period1.Start, TimeTestFixtures.Period1.End_Valid)
+            .SeedVehicle("Vehicle2")
+            .SaveAsync();
 
         // Act
-        var request = AssignmentRequestBuilder.For(driver1Id, vehicle2Id).OverlappingPeriod1().Build();
+        var request = AssignmentRequestBuilder
+            .For(seedResult.Drivers["Driver1"], seedResult.Vehicles["Vehicle2"])
+            .OverlappingPeriod1().Build();
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         // Assert
@@ -123,17 +125,14 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     public async Task Should_return_409_when_vehicle_has_overlapping_assignments()
     {
         // Arrange
-        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
-        var driver2Id = await _dbSeeder.SeedDriver("Driver2");
-        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
-
-        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
-
-        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+        var seedResult = await _dbSeeder.Seed()
+            .SeedAssignment("Driver1", "Vehicle1", TimeTestFixtures.Period1.Start, TimeTestFixtures.Period1.End_Valid)
+            .SeedDriver("Driver2")
+            .SaveAsync();
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(driver2Id, vehicle1Id).OverlappingPeriod1().Build();
+            .For(seedResult.Drivers["Driver2"], seedResult.Vehicles["Vehicle1"]).OverlappingPeriod1().Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -153,18 +152,15 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     public async Task Should_return_201_when_assignments_time_overlaps_but_driver_and_vehicle_are_different()
     {
         // Arrange
-        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
-        var driver2Id = await _dbSeeder.SeedDriver("Driver2");
-        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
-        var vehicle2Id = await _dbSeeder.SeedVehicle("Vehicle2");
-
-        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
-
-        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+        var seedResult = await _dbSeeder.Seed()
+            .SeedAssignment("Driver1", "Vehicle1", TimeTestFixtures.Period1.Start, TimeTestFixtures.Period1.End_Valid)
+            .SeedDriver("Driver2")
+            .SeedVehicle("Vehicle2")
+            .SaveAsync();
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(driver2Id, vehicle2Id)
+            .For(seedResult.Drivers["Driver2"], seedResult.Vehicles["Vehicle2"])
             .OverlappingPeriod1()
             .Build();
 
@@ -178,16 +174,13 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     public async Task Should_return_201_when_assignments_are_back_to_back_for_the_same_driver_and_vehicle()
     {
         // Arrange
-        var driver1Id = await _dbSeeder.SeedDriver("Driver1");
-        var vehicle1Id = await _dbSeeder.SeedVehicle("Vehicle1");
-
-        var assignment1 = AssignmentRequestBuilder.For(driver1Id, vehicle1Id).Build();
-
-        _ = await _client.PostAsJsonAsync("/assignments", assignment1);
+        var seedResult = await _dbSeeder.Seed()
+            .SeedAssignment("Driver1", "Vehicle1", TimeTestFixtures.Period1.Start, TimeTestFixtures.Period1.End_Valid)
+            .SaveAsync();
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(driver1Id, vehicle1Id).BackToBackAfterPeriod1().Build();
+            .For(seedResult.Drivers["Driver1"], seedResult.Vehicles["Vehicle1"]).BackToBackAfterPeriod1().Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -198,10 +191,12 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     [Fact]
     public async Task Should_return_201_when_input_is_valid()
     {
-        var driverId = await _dbSeeder.SeedDriver("Driver1");
-        var vehicleId = await _dbSeeder.SeedVehicle("Vehicle1");
+        var seedResult = await _dbSeeder.Seed()
+            .SeedDriver("Driver1")
+            .SeedVehicle("Vehicle1")
+            .SaveAsync();
 
-        var request = AssignmentRequestBuilder.For(driverId, vehicleId).Build();
+        var request = AssignmentRequestBuilder.For(seedResult.Drivers["Driver1"], seedResult.Vehicles["Vehicle1"]).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 

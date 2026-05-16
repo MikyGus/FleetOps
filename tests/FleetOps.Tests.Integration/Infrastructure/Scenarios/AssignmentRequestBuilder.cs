@@ -1,3 +1,4 @@
+using FleetOps.Tests.Integration.Contracts;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 
 namespace FleetOps.Tests.Integration.Infrastructure.Scenarios;
@@ -59,6 +60,6 @@ public sealed class AssignmentRequestBuilder
         return this;
     }
 
-    public TestCreateAssignmentRequest Build() 
+    public CreateAssignmentRequest Build() 
         => new(_driverId, _vehicleId, _startUtc, _endUtc);
 }
