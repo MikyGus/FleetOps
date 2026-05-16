@@ -1,4 +1,4 @@
-using FleetOps.Tests.Integration.Contracts;
+using FleetOps.Tests.Integration.Contracts.Assignments;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 
 namespace FleetOps.Tests.Integration.Infrastructure.Scenarios;

@@ -1,4 +1,4 @@
-namespace FleetOps.Tests.Integration.Contracts;
+namespace FleetOps.Tests.Integration.Contracts.Assignments;
 
 public sealed record CreateAssignmentRequest(
     Guid DriverId,
