@@ -98,7 +98,7 @@ public sealed class DbSeedBuilder
             var driver = new Driver(seed.name);
 
             dbContext.Drivers.Add(driver);
-            result.Drivers[seed.name] = driver.Id;
+            result.Drivers[seed.name] = driver;
         }
 
         foreach (var seed in _vehicles)
@@ -110,21 +110,21 @@ public sealed class DbSeedBuilder
             }
 
             dbContext.Vehicles.Add(vehicle);
-            result.Vehicles[seed.registrationNumber] = vehicle.Id;
+            result.Vehicles[seed.registrationNumber] = vehicle;
         }
 
         int assignmentIndex = 0;
         foreach (var seed in _assignments)
         {
             var assignment = new Assignment(
-                result.Drivers[seed.driverName],
-                result.Vehicles[seed.registrationNumber],
+                result.Drivers[seed.driverName].Id,
+                result.Vehicles[seed.registrationNumber].Id,
                 seed.startUtc,
                 seed.endUtc
             );
 
             dbContext.Assignments.Add(assignment);
-            result.Assignments[$"Assignment{assignmentIndex++}"] = assignment.Id;
+            result.Assignments[$"Assignment{assignmentIndex++}"] = assignment;
         }
 
         await dbContext.SaveChangesAsync(ct);

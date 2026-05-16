@@ -31,7 +31,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     {
         var seedResult = await _dbSeeder.Seed().SeedVehicle("Vehicle", true).SaveAsync();
 
-        var request = AssignmentRequestBuilder.WithMissingDriver(seedResult.Vehicles["Vehicle"]).Build();
+        var request = AssignmentRequestBuilder.WithMissingDriver(seedResult.Vehicles["Vehicle"].Id).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -51,7 +51,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     {
         var seedResult = await _dbSeeder.Seed().SeedDriver("Driver").SaveAsync();
 
-        var request = AssignmentRequestBuilder.WithMissingVehicle(seedResult.Drivers["Driver"]).Build();
+        var request = AssignmentRequestBuilder.WithMissingVehicle(seedResult.Drivers["Driver"].Id).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -75,7 +75,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
             .SaveAsync();
 
         var request = AssignmentRequestBuilder
-            .For(seedResult.Drivers["Driver"], seedResult.Vehicles["Vehicle"])
+            .For(seedResult.Drivers["Driver"].Id, seedResult.Vehicles["Vehicle"].Id)
             .WithEndBeforeStart()
             .Build();
 
@@ -105,7 +105,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(seedResult.Drivers["Driver1"], seedResult.Vehicles["Vehicle2"])
+            .For(seedResult.Drivers["Driver1"].Id, seedResult.Vehicles["Vehicle2"].Id)
             .OverlappingPeriod1().Build();
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -132,7 +132,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(seedResult.Drivers["Driver2"], seedResult.Vehicles["Vehicle1"]).OverlappingPeriod1().Build();
+            .For(seedResult.Drivers["Driver2"].Id, seedResult.Vehicles["Vehicle1"].Id).OverlappingPeriod1().Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -160,7 +160,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(seedResult.Drivers["Driver2"], seedResult.Vehicles["Vehicle2"])
+            .For(seedResult.Drivers["Driver2"].Id, seedResult.Vehicles["Vehicle2"].Id)
             .OverlappingPeriod1()
             .Build();
 
@@ -180,7 +180,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Act
         var request = AssignmentRequestBuilder
-            .For(seedResult.Drivers["Driver1"], seedResult.Vehicles["Vehicle1"]).BackToBackAfterPeriod1().Build();
+            .For(seedResult.Drivers["Driver1"].Id, seedResult.Vehicles["Vehicle1"].Id).BackToBackAfterPeriod1().Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
@@ -196,7 +196,8 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
             .SeedVehicle("Vehicle1")
             .SaveAsync();
 
-        var request = AssignmentRequestBuilder.For(seedResult.Drivers["Driver1"], seedResult.Vehicles["Vehicle1"]).Build();
+        var request = AssignmentRequestBuilder
+            .For(seedResult.Drivers["Driver1"].Id, seedResult.Vehicles["Vehicle1"].Id).Build();
 
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
