@@ -3,6 +3,7 @@ using FleetOps.Domain.Drivers;
 using FleetOps.Domain.Vehicles;
 using FleetOps.Infrastructure.Persistence;
 using FleetOps.Tests.Integration.Contracts;
+using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
 public sealed class DbSeedBuilder
@@ -51,6 +52,9 @@ public sealed class DbSeedBuilder
         return this;
     }
 
+    public DbSeedBuilder SeedAssignment(string driverName, string registrationNumber) 
+        => SeedAssignment(driverName, registrationNumber, TimeTestFixtures.Period1.Start, TimeTestFixtures.Period1.End_Valid);
+
     public DbSeedBuilder SeedAssignment(string driverName, string registrationNumber, DateTimeOffset startUtc, DateTimeOffset endUtc)
     {
         if (!_drivers.Exists(x => x.name == driverName))
@@ -64,6 +68,9 @@ public sealed class DbSeedBuilder
         _assignments.Add(new AssignmentSeed(driverName, registrationNumber, startUtc, endUtc));
         return this;
     }
+
+    public DbSeedBuilder SeedAssignments(int count, string driverName, string registrationNumber) 
+        => SeedAssignments(count, driverName, registrationNumber, TimeTestFixtures.Period1.Start, TimeTestFixtures.Period1.End_Valid);
 
     public DbSeedBuilder SeedAssignments(int count, string driverName, string registrationNumber, DateTimeOffset startUtc, DateTimeOffset endUtc)
     {
