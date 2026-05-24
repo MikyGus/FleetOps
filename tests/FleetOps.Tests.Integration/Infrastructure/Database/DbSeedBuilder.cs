@@ -17,6 +17,13 @@ public sealed class DbSeedBuilder
     private List<VehicleSeed> _vehicles = [];
     private List<AssignmentSeed> _assignments = [];
 
+    [Flags]
+    public enum  AffixPosition 
+    { 
+        Prefix = 1, 
+        Postfix = 2
+    }
+
     public DbSeedBuilder(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
@@ -28,11 +35,14 @@ public sealed class DbSeedBuilder
         return this;
     }
 
-    public DbSeedBuilder SeedDrivers(int count, string namePrefix = "Driver")
+    public DbSeedBuilder SeedDrivers(int count, string name = "Driver", AffixPosition affixPosition = AffixPosition.Postfix )
     {
         for (int i = 0; i < count; i++)
         {
-            _drivers.Add(new DriverSeed($"{namePrefix}{i}"));
+            var prefix = (affixPosition & AffixPosition.Prefix) != 0 ? i.ToString() : "";
+            var postfix = (affixPosition & AffixPosition.Postfix) != 0 ? i.ToString() : "";
+
+            _drivers.Add(new DriverSeed($"{prefix}{name}{postfix}"));
         }
         return this;
     }
