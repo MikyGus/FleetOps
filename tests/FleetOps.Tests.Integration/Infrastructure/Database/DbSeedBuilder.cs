@@ -53,11 +53,14 @@ public sealed class DbSeedBuilder
         return this;
     }
 
-    public DbSeedBuilder SeedVehicles(int count, string registrationNumberPrefix = "Vehicle", bool isActive = true)
+    public DbSeedBuilder SeedVehicles(int count, string registrationNumberPrefix = "Vehicle", bool isActive = true, AffixPosition affixPosition = AffixPosition.Postfix)
     {
         for (int i = 0; i < count; i++)
         {
-            _vehicles.Add(new VehicleSeed($"{registrationNumberPrefix}{i}",isActive));
+            var prefix = (affixPosition & AffixPosition.Prefix) != 0 ? i.ToString() : "";
+            var postfix = (affixPosition & AffixPosition.Postfix) != 0 ? i.ToString() : "";
+
+            _vehicles.Add(new VehicleSeed($"{prefix}{registrationNumberPrefix}{postfix}",isActive));
         }
         return this;
     }
