@@ -6,6 +6,8 @@ using FleetOps.Tests.Integration.Contracts;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
+namespace FleetOps.Tests.Integration.Infrastructure.Database;
+
 public sealed class DbSeedBuilder
 {
     private sealed record DriverSeed(string name);
