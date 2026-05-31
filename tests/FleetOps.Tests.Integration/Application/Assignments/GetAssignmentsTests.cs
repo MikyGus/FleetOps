@@ -58,13 +58,12 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         result.Count(x => x.VehicleId == vehicle.Id).ShouldBe(10);
         result.Count(x => x.VehicleId == vehicle3.Id).ShouldBe(5);
 
-        var expectedAssignmentIds = seedResult.Assignments.Values
+        var expectedAssignments = seedResult.Assignments.Values
             .Where(x => x.DriverId == driver.Id)
-            .Select(x => x.Id)
+            .OrderBy(x => x.StartUtc)
+            .Select(x => new AssignmentResponse(x.Id, x.DriverId, x.VehicleId, x.StartUtc, x.EndUtc))
             .ToList();
-        result.Select(x => x.Id).ShouldBe(expectedAssignmentIds, ignoreOrder: true);
-
-        result.Select(x => x.StartUtc).ShouldBeInOrder();
+        result.ShouldBe(expectedAssignments);
     }
 
     [Fact]
@@ -89,13 +88,12 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         result.Count(x => x.DriverId == driver.Id).ShouldBe(5);
         result.Count(x => x.DriverId == driver2.Id).ShouldBe(8);
 
-        var expectedAssignmentIds = seedResult.Assignments.Values
+        var expectedAssignments = seedResult.Assignments.Values
             .Where(x => x.VehicleId == vehicle.Id)
-            .Select(x => x.Id)
+            .OrderBy(x => x.StartUtc)
+            .Select(x => new AssignmentResponse(x.Id, x.DriverId, x.VehicleId, x.StartUtc, x.EndUtc))
             .ToList();
-        result.Select(x => x.Id).ShouldBe(expectedAssignmentIds, ignoreOrder: true);
-
-        result.Select(x => x.StartUtc).ShouldBeInOrder();
+        result.ShouldBe(expectedAssignments);
     }
 
     [Fact]
@@ -121,12 +119,10 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         
         var expectedAssignments = seedResult.Assignments.Values
             .Where(x => x.EndUtc > fromUtc && x.StartUtc < toUtc)
+            .OrderBy(x => x.StartUtc)
+            .Select(x => new AssignmentResponse(x.Id, x.DriverId, x.VehicleId, x.StartUtc, x.EndUtc))
             .ToList();
-
-        result.Count.ShouldBe(expectedAssignments.Count());
-
-        result.Select(x => x.Id)
-            .ShouldBe(expectedAssignments.Select(x => x.Id), ignoreOrder: true);
+        result.ShouldBe(expectedAssignments);
     }
 
     [Fact]
@@ -147,9 +143,12 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         result.ShouldNotBeNull();
         result.Count.ShouldBe(limit);
 
-        var expectedAssignments = seedResult.Assignments.Values.Take(limit).ToList();
-        result.Select(x => x.Id)
-            .ShouldBe(expectedAssignments.Select(x => x.Id), ignoreOrder: true);
+        var expectedAssignments = seedResult.Assignments.Values
+            .OrderBy(x => x.StartUtc)
+            .Take(limit)
+            .Select(x => new AssignmentResponse(x.Id, x.DriverId, x.VehicleId, x.StartUtc, x.EndUtc))
+            .ToList();
+        result.ShouldBe(expectedAssignments);
     }
 
     [Fact]
@@ -173,11 +172,12 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         result.Count.ShouldBe(limit);
 
         var expectedAssignments = seedResult.Assignments.Values
+            .OrderBy(x => x.StartUtc)
             .Skip(offset)
             .Take(limit)
+            .Select(x => new AssignmentResponse(x.Id, x.DriverId, x.VehicleId, x.StartUtc, x.EndUtc))
             .ToList();
-        result.Select(x => x.Id)
-            .ShouldBe(expectedAssignments.Select(x => x.Id), ignoreOrder: true);
+        result.ShouldBe(expectedAssignments);
     }
 
     [Fact]
