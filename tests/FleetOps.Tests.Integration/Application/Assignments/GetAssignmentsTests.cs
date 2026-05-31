@@ -47,9 +47,16 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         var vehicle = seedResult.Vehicles["Vehicle"];
         var vehicle3 = seedResult.Vehicles["Vehicle3"];
 
-        var result = await _client
-            .GetFromJsonAsync<List<AssignmentResponse>>($"/assignments?driverId={driver.Id}");
+        var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
+        {
+            ["driverId"] = driver.Id.ToString()
+        });
 
+        var response = await _client.GetAsync(url);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
         result.ShouldNotBeNull();
         result.Count.ShouldBe(15);
 
@@ -79,8 +86,16 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         var driver2 = seedResult.Drivers["Driver2"];
         var vehicle = seedResult.Vehicles["Vehicle"];
 
-        var result = await _client
-            .GetFromJsonAsync<List<AssignmentResponse>>($"/assignments?vehicleId={vehicle.Id}");
+        var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
+        {
+            ["vehicleId"] = vehicle.Id.ToString()
+        });
+
+        var response = await _client.GetAsync(url);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
         
         result.ShouldNotBeNull();
         result.Count.ShouldBe(13);
@@ -113,7 +128,12 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
            ["toUtc"] = toUtc.ToUniversalTime().ToString("O"),
            ["limit"] = assignmentsToGenerate.ToString()
         });
-        var result = await _client.GetFromJsonAsync<List<AssignmentResponse>>(url);
+
+        var response = await _client.GetAsync(url);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
 
         result.ShouldNotBeNull();
         
@@ -138,7 +158,11 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         {
            ["limit"] = limit.ToString() 
         });
-        var result = await _client.GetFromJsonAsync<List<AssignmentResponse>>(url);
+        var response = await _client.GetAsync(url);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
 
         result.ShouldNotBeNull();
         result.Count.ShouldBe(limit);
@@ -166,7 +190,11 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
            ["limit"] = limit.ToString(),
            ["offset"] = offset.ToString()
         });
-        var result = await _client.GetFromJsonAsync<List<AssignmentResponse>>(url);
+        var response = await _client.GetAsync(url);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
 
         result.ShouldNotBeNull();
         result.Count.ShouldBe(limit);
