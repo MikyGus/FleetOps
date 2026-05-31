@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using FleetOps.Api.Contracts;
 using FleetOps.Domain.Errors;
+using FleetOps.Tests.Integration.Contracts.Assignments;
 using FleetOps.Tests.Integration.Contracts.Errors;
 using FleetOps.Tests.Integration.Infrastructure.Database;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
@@ -19,7 +20,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
     public CreateAssignmentTests(IntegrationTestWebAppFactory factory)
     {
         _client = factory.CreateClient();
-       _dbSeeder = new DatabaseSeeder(factory.Services.GetRequiredService<IServiceScopeFactory>());
+        _dbSeeder = new DatabaseSeeder(factory.Services.GetRequiredService<IServiceScopeFactory>());
     }
 
     public async Task InitializeAsync() => await TestDatabaseCleaner.ResetAsync();
@@ -168,6 +169,19 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<CreateAssignmentResponse>();
+        result.ShouldNotBeNull();
+        result.Id.ShouldNotBe(Guid.Empty);
+
+        response.Headers.Location.ShouldNotBeNull();
+        response.Headers.Location.AbsolutePath.ShouldBe($"/assignments/{result.Id}");
+
+        var assignment = await _client.GetFromJsonAsync<AssignmentResponse>(response.Headers.Location.AbsolutePath);
+        var expectedAssignment = new AssignmentResponse(result.Id, request.DriverId, request.VehicleId, request.StartUtc, request.EndUtc);
+        assignment.ShouldNotBeNull();
+        assignment.ShouldBe(expectedAssignment);
     }
 
     [Fact]
@@ -186,6 +200,19 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<CreateAssignmentResponse>();
+        result.ShouldNotBeNull();
+        result.Id.ShouldNotBe(Guid.Empty);
+
+        response.Headers.Location.ShouldNotBeNull();
+        response.Headers.Location.AbsolutePath.ShouldBe($"/assignments/{result.Id}");
+
+        var assignment = await _client.GetFromJsonAsync<AssignmentResponse>(response.Headers.Location.AbsolutePath);
+        var expectedAssignment = new AssignmentResponse(result.Id, request.DriverId, request.VehicleId, request.StartUtc, request.EndUtc);
+        assignment.ShouldNotBeNull();
+        assignment.ShouldBe(expectedAssignment);
     }
 
     [Fact]
@@ -202,5 +229,18 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         var response = await _client.PostAsJsonAsync("/assignments", request);
 
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<CreateAssignmentResponse>();
+        result.ShouldNotBeNull();
+        result.Id.ShouldNotBe(Guid.Empty);
+
+        response.Headers.Location.ShouldNotBeNull();
+        response.Headers.Location.AbsolutePath.ShouldBe($"/assignments/{result.Id}");
+
+        var assignment = await _client.GetFromJsonAsync<AssignmentResponse>(response.Headers.Location.AbsolutePath);
+        var expectedAssignment = new AssignmentResponse(result.Id, request.DriverId, request.VehicleId, request.StartUtc, request.EndUtc);
+        assignment.ShouldNotBeNull();
+        assignment.ShouldBe(expectedAssignment);
     }
 }
