@@ -3,11 +3,14 @@ using System.Net.Http.Json;
 using FleetOps.Api.Contracts;
 using FleetOps.Domain.Errors;
 using FleetOps.Tests.Integration.Contracts.Assignments;
+using FleetOps.Tests.Integration.Contracts.Errors;
 using FleetOps.Tests.Integration.Infrastructure.Database;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
+
+namespace FleetOps.Tests.Integration.Application.Assignments;
 
 public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFactory>, IAsyncLifetime
 {
@@ -26,7 +29,11 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
     [Fact]
     public async Task Should_return_200_with_an_empty_list_when_database_is_empty()
     {
-        var result = await _client.GetFromJsonAsync<List<AssignmentResponse>>("/assignments");
+        var response = await _client.GetAsync("/assignments");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
+
+        var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
 
         result.ShouldNotBeNull();
         result.Count.ShouldBe(0);
@@ -36,11 +43,11 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
     public async Task Should_return_only_assignments_for_driver()
     {
         var seedResult = await _seeder.Seed()
-            .SeedAssignments(10,"Driver","Vehicle")
+            .SeedAssignments(10, "Driver", "Vehicle")
             .SeedAssignments(5, "Driver2", "Vehicle3")
             .SeedAssignments(5, "Driver3", "Vehicle4")
             // We add "Driver" again but with 10 months earlier to mix it up a bit
-            .SeedAssignments(5,"Driver","Vehicle3",TimeTestFixtures.Period1.Start.AddMonths(-10), TimeTestFixtures.Period1.End_Valid.AddMonths(-10))
+            .SeedAssignments(5, "Driver", "Vehicle3", TimeTestFixtures.Period1.Start.AddMonths(-10), TimeTestFixtures.Period1.End_Valid.AddMonths(-10))
             .SaveAsync();
 
         var driver = seedResult.Drivers["Driver"];
@@ -49,7 +56,7 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
 
         var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
         {
-            ["driverId"] = driver.Id.ToString()
+            ["driverid"] = driver.Id.ToString()
         });
 
         var response = await _client.GetAsync(url);
@@ -88,7 +95,7 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
 
         var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
         {
-            ["vehicleId"] = vehicle.Id.ToString()
+            ["vehicleid"] = vehicle.Id.ToString()
         });
 
         var response = await _client.GetAsync(url);
@@ -96,7 +103,7 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
 
         var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
-        
+
         result.ShouldNotBeNull();
         result.Count.ShouldBe(13);
 
@@ -124,9 +131,9 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
 
         var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
         {
-           ["fromUtc"] = fromUtc.ToUniversalTime().ToString("O"),
-           ["toUtc"] = toUtc.ToUniversalTime().ToString("O"),
-           ["limit"] = assignmentsToGenerate.ToString()
+            ["fromutc"] = fromUtc.ToUniversalTime().ToString("O"),
+            ["toutc"] = toUtc.ToUniversalTime().ToString("O"),
+            ["limit"] = assignmentsToGenerate.ToString()
         });
 
         var response = await _client.GetAsync(url);
@@ -136,7 +143,7 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         var result = await response.Content.ReadFromJsonAsync<List<AssignmentResponse>>();
 
         result.ShouldNotBeNull();
-        
+
         var expectedAssignments = seedResult.Assignments.Values
             .Where(x => x.EndUtc > fromUtc && x.StartUtc < toUtc)
             .OrderBy(x => x.StartUtc)
@@ -146,17 +153,17 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
     }
 
     [Fact]
-    public async Task Should_return_the_correct_amount_of_assignments_when_using_limit()
+    public async Task Should_return_limited_assignments_ordered_by_start_time()
     {
         var assignmentsToGenerate = 300;
         var limit = 30;
         var seedResult = await _seeder.Seed()
             .SeedAssignments(assignmentsToGenerate, "Driver", "Vehicle")
             .SaveAsync();
-        
+
         var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
         {
-           ["limit"] = limit.ToString() 
+            ["limit"] = limit.ToString()
         });
         var response = await _client.GetAsync(url);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -176,7 +183,7 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
     }
 
     [Fact]
-    public async Task Should_return_the_correct_amount_of_assignments_and_page_when_using_limit_and_offset()
+    public async Task Should_return_requested_assignment_page_when_using_limit_and_offset()
     {
         var assignmentsToGenerate = 300;
         var limit = 30;
@@ -184,11 +191,11 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
         var seedResult = await _seeder.Seed()
             .SeedAssignments(assignmentsToGenerate, "Driver", "Vehicle")
             .SaveAsync();
-        
+
         var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
         {
-           ["limit"] = limit.ToString(),
-           ["offset"] = offset.ToString()
+            ["limit"] = limit.ToString(),
+            ["offset"] = offset.ToString()
         });
         var response = await _client.GetAsync(url);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -216,15 +223,15 @@ public sealed class GetAssignmentsTests : IClassFixture<IntegrationTestWebAppFac
 
         var url = QueryHelpers.AddQueryString("/assignments", new Dictionary<string, string?>
         {
-           ["fromUtc"] = fromUtc.ToUniversalTime().ToString("O"),
-           ["toUtc"] = toUtc.ToUniversalTime().ToString("O")
+            ["fromutc"] = fromUtc.ToUniversalTime().ToString("O"),
+            ["toutc"] = toUtc.ToUniversalTime().ToString("O")
         });
         var response = await _client.GetAsync(url);
 
         response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
 
-        var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
 
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);

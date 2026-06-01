@@ -8,6 +8,6 @@ public sealed class CreateVehicleCommandValidator : AbstractValidator<CreateVehi
     public CreateVehicleCommandValidator()
     {
         RuleFor(x => x.RegistrationNumber)
-            .ValidRegistrationNumber();    
+            .ValidRegistrationNumber();
     }
 }

@@ -17,17 +17,17 @@ public sealed class CreateAssignmentHandler
     }
 
     public async Task<CreateAssignmentResult> HandleAsync(
-        CreateAssignmentCommand command, 
+        CreateAssignmentCommand command,
         CancellationToken ct)
     {
         await _validator.ValidateAndThrowAsync(command, ct);
-        
+
         var assignment = new Assignment(
             command.DriverId,
             command.VehicleId,
             command.StartUtc,
             command.EndUtc);
-        
+
         await _repo.AddAsync(assignment, ct);
         await _repo.SaveChangesAsync(ct);
 

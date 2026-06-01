@@ -18,16 +18,16 @@ public sealed class Assignment
 
     public Driver Driver { get; private set; } = null!;
     public Vehicle Vehicle { get; private set; } = null!;
-    
-    private Assignment() {} // For ORM
+
+    private Assignment() { } // For ORM
 
     public Assignment(Guid driverId, Guid vehicleId, DateTimeOffset startUtc, DateTimeOffset endUtc)
     {
-        if (driverId == Guid.Empty) 
+        if (driverId == Guid.Empty)
             throw new DomainValidationException(nameof(driverId), ErrorCodes.Assignment.DriverId.Required, "DriverId must be set.");
-        if (vehicleId == Guid.Empty) 
+        if (vehicleId == Guid.Empty)
             throw new DomainValidationException(nameof(vehicleId), ErrorCodes.Assignment.VehicleId.Required, "VehicleId must be set.");
-        if (endUtc <= startUtc) 
+        if (endUtc <= startUtc)
             throw new DomainValidationException(nameof(endUtc), ErrorCodes.Assignment.TimeRange.Invalid, "EndUtc must be greater than StartUtc.");
 
         DriverId = driverId;

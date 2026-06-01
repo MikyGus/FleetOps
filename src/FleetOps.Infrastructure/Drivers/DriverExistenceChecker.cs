@@ -9,9 +9,9 @@ public sealed class DriverExistenceChecker : IEntityExistenceChecker<Driver, Gui
 {
     private readonly FleetOpsDbContext _db;
 
-    public DriverExistenceChecker(FleetOpsDbContext db) 
+    public DriverExistenceChecker(FleetOpsDbContext db)
         => _db = db;
 
-    public Task<bool> ExistsAsync(Guid id, CancellationToken ct) 
+    public Task<bool> ExistsAsync(Guid id, CancellationToken ct)
         => _db.Drivers.AsNoTracking().AnyAsync(x => x.Id == id, ct);
 }

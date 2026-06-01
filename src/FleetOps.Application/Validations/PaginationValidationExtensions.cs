@@ -11,7 +11,7 @@ public static class PaginationValidationExtensions
             .WithMessage("{PropertyName} must be between {From} and {To}.")
             .WithErrorCode(ErrorCodes.Pagination.Limit.Invalid);
 
-    public static IRuleBuilderOptions<T, int> ValidOffset<T>(this IRuleBuilder<T, int> ruleBuilder) 
+    public static IRuleBuilderOptions<T, int> ValidOffset<T>(this IRuleBuilder<T, int> ruleBuilder)
         => ruleBuilder
             .GreaterThanOrEqualTo(0)
             .WithMessage("{PropertyName} must be greater than or equal to {ComparisonValue}.")

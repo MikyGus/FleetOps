@@ -119,7 +119,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
         error.Details.ShouldNotBeNull();
         error.Details.ShouldContainKey("DriverId");
-        error.Details["DriverId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.DriverId.Overlap);        
+        error.Details["DriverId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.DriverId.Overlap);
     }
 
     [Fact]
@@ -146,7 +146,7 @@ public sealed class CreateAssignmentTests : IClassFixture<IntegrationTestWebAppF
         error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
         error.Details.ShouldNotBeNull();
         error.Details.ShouldContainKey("VehicleId");
-        error.Details["VehicleId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.VehicleId.Overlap);    
+        error.Details["VehicleId"].ShouldContain(detail => detail.ErrorCode == ErrorCodes.Assignment.VehicleId.Overlap);
     }
 
     [Fact]

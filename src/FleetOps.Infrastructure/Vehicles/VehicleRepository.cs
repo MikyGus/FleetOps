@@ -13,9 +13,9 @@ public sealed class VehicleRepository : IVehicleRepository
         _db = db;
     }
 
-    public Task AddAsync(Vehicle vehicle, CancellationToken ct) 
+    public Task AddAsync(Vehicle vehicle, CancellationToken ct)
         => _db.Vehicles.AddAsync(vehicle, ct).AsTask();
 
-    public Task SaveChangesAsync(CancellationToken ct) 
+    public Task SaveChangesAsync(CancellationToken ct)
         => _db.SaveChangesAsync(ct);
 }

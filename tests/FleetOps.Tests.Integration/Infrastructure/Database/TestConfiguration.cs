@@ -4,7 +4,7 @@ namespace FleetOps.Tests.Integration.Infrastructure.Database;
 
 public static class TestConfiguration
 {
-    private static readonly IConfigurationRoot Configuration = 
+    private static readonly IConfigurationRoot Configuration =
         new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.Testing.json", optional: true)

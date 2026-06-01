@@ -26,7 +26,7 @@ public static class DateValidationExtensions
             if (from.HasValue && to.HasValue && from >= to)
             {
                 context.AddFailure(new ValidationFailure(
-                    fromName, 
+                    fromName,
                     $"{fromName} must be earlier than {toName}.")
                 {
                     ErrorCode = errorCode
@@ -62,7 +62,7 @@ public static class DateValidationExtensions
             if (from >= to)
             {
                 context.AddFailure(new ValidationFailure(
-                    fromName, 
+                    fromName,
                     $"{fromName} must be earlier than {toName}.")
                 {
                     ErrorCode = errorCode

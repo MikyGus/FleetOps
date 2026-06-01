@@ -38,7 +38,7 @@ public sealed class CreateVehicleCommandValidatorTests
 
         var result = await _validator.TestValidateAsync(command);
 
-        result.ShouldNotHaveAnyValidationErrors();        
+        result.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]

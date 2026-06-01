@@ -26,14 +26,14 @@ namespace FleetOps.Infrastructure.Persistence.Migrations
                     table.PrimaryKey("PK_assignments", x => x.id);
                 });
 
-                migrationBuilder.Sql(@"CREATE EXTENSION IF NOT EXISTS btree_gist;");
+            migrationBuilder.Sql(@"CREATE EXTENSION IF NOT EXISTS btree_gist;");
 
-                migrationBuilder.Sql(@"
+            migrationBuilder.Sql(@"
                 ALTER TABLE assignments
                 ADD CONSTRAINT ck_assignments_time CHECK (end_utc > start_utc);
                 ");
 
-                migrationBuilder.Sql(@"
+            migrationBuilder.Sql(@"
                 ALTER TABLE assignments
                 ADD CONSTRAINT ex_assignments_driver_no_overlap
                 EXCLUDE USING gist (
@@ -42,7 +42,7 @@ namespace FleetOps.Infrastructure.Persistence.Migrations
                 );
                 ");
 
-                migrationBuilder.Sql(@"
+            migrationBuilder.Sql(@"
                 ALTER TABLE assignments
                 ADD CONSTRAINT ex_assignments_vehicle_no_overlap
                 EXCLUDE USING gist (
@@ -55,8 +55,8 @@ namespace FleetOps.Infrastructure.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.Sql(@"ALTER TABLE assignments DROP CONSTRAINT IF EXISTS ex_assignments_vehicle_no_overlap;"); 
-            migrationBuilder.Sql(@"ALTER TABLE assignments DROP CONSTRAINT IF EXISTS ex_assignments_driver_no_overlap;"); 
+            migrationBuilder.Sql(@"ALTER TABLE assignments DROP CONSTRAINT IF EXISTS ex_assignments_vehicle_no_overlap;");
+            migrationBuilder.Sql(@"ALTER TABLE assignments DROP CONSTRAINT IF EXISTS ex_assignments_driver_no_overlap;");
             migrationBuilder.Sql(@"ALTER TABLE assignments DROP CONSTRAINT IF EXISTS ck_assignments_time;");
 
             migrationBuilder.DropTable(

@@ -16,14 +16,14 @@ public sealed class AssignmentRequestBuilder
         _vehicleId = vehicleId;
     }
 
-    public static AssignmentRequestBuilder For(Guid driverId, Guid vehicleId) 
+    public static AssignmentRequestBuilder For(Guid driverId, Guid vehicleId)
         => new(driverId, vehicleId);
 
     public static AssignmentRequestBuilder WithMissingDriver(Guid vehicleId)
         => new(Guid.NewGuid(), vehicleId);
 
     public static AssignmentRequestBuilder WithMissingVehicle(Guid driverId)
-        => new (driverId, Guid.NewGuid());
+        => new(driverId, Guid.NewGuid());
 
     public AssignmentRequestBuilder WithEndBeforeStart()
     {
@@ -60,6 +60,6 @@ public sealed class AssignmentRequestBuilder
         return this;
     }
 
-    public CreateAssignmentRequest Build() 
+    public CreateAssignmentRequest Build()
         => new(_driverId, _vehicleId, _startUtc, _endUtc);
 }

@@ -44,7 +44,7 @@ public sealed class GetVehiclesTests : IClassFixture<IntegrationTestWebAppFactor
     {
         var url = QueryHelpers.AddQueryString("/vehicles", new Dictionary<string, string?>
         {
-            ["RegistrationNumber"] = new string('X', 21)
+            ["registrationnumber"] = new string('X', 21)
         });
         var response = await _client.GetAsync(url);
 
@@ -61,7 +61,7 @@ public sealed class GetVehiclesTests : IClassFixture<IntegrationTestWebAppFactor
     }
 
     [Fact]
-    public async Task Should_return_only_vehicles_registration_number_filter()
+    public async Task Should_return_only_vehicles_matching_registration_number_filter()
     {
         var seedResult = await _seeder.Seed()
             .SeedVehicles(10, "Vehicle", true, DbSeedBuilder.AffixPosition.Postfix)
@@ -72,7 +72,7 @@ public sealed class GetVehiclesTests : IClassFixture<IntegrationTestWebAppFactor
 
         var url = QueryHelpers.AddQueryString("/vehicles", new Dictionary<string, string?>
         {
-            ["RegistrationNumber"] = "vehicle"
+            ["registrationnumber"] = "vehicle"
         });
         var response = await _client.GetAsync(url);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
@@ -130,7 +130,7 @@ public sealed class GetVehiclesTests : IClassFixture<IntegrationTestWebAppFactor
         var seedResult = await _seeder.Seed()
             .SeedVehicles(vehiclesToGenerate, "Vehicle")
             .SaveAsync();
-        
+
         var url = QueryHelpers.AddQueryString("/vehicles", new Dictionary<string, string?>
         {
             ["limit"] = limit.ToString(),

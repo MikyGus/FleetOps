@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using FleetOps.Api.Contracts;
 using FleetOps.Domain.Errors;
 using FleetOps.Tests.Integration.Contracts.Entities.Drivers;
+using FleetOps.Tests.Integration.Contracts.Errors;
 using FleetOps.Tests.Integration.Infrastructure.Database;
 using FleetOps.Tests.Integration.Infrastructure.Fixtures;
 using Microsoft.AspNetCore.WebUtilities;
@@ -42,14 +43,14 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
     {
         var url = QueryHelpers.AddQueryString("/drivers", new Dictionary<string, string?>
         {
-           ["name"] = new string('X', 201) 
+            ["name"] = new string('X', 201)
         });
         var response = await _client.GetAsync(url);
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
         response.Content.Headers.ContentType?.MediaType.ShouldBe("application/json");
 
-        var error = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        var error = await response.Content.ReadFromJsonAsync<ErrorResponseDto>();
         error.ShouldNotBeNull();
         error.Code.ShouldBe(ApiErrorCodes.ValidationError.ErrorCode);
 
@@ -70,7 +71,7 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
 
         var url = QueryHelpers.AddQueryString("/drivers", new Dictionary<string, string?>
         {
-           ["name"] = "driver" 
+            ["name"] = "driver"
         });
         var response = await _client.GetAsync(url);
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
@@ -100,7 +101,7 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
 
         var url = QueryHelpers.AddQueryString("/drivers", new Dictionary<string, string?>
         {
-           ["limit"] = limit.ToString() 
+            ["limit"] = limit.ToString()
         });
         var response = await _client.GetAsync(url);
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
@@ -131,8 +132,8 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
 
         var url = QueryHelpers.AddQueryString("/drivers", new Dictionary<string, string?>
         {
-           ["limit"] = limit.ToString(),
-           ["offset"] = offset.ToString()
+            ["limit"] = limit.ToString(),
+            ["offset"] = offset.ToString()
         });
         var response = await _client.GetAsync(url);
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);

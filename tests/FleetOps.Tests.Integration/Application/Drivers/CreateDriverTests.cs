@@ -13,7 +13,7 @@ public sealed class CreateDriverTests : IClassFixture<IntegrationTestWebAppFacto
 {
     private readonly HttpClient _client;
 
-    public CreateDriverTests(IntegrationTestWebAppFactory factory) 
+    public CreateDriverTests(IntegrationTestWebAppFactory factory)
         => _client = factory.CreateClient();
 
     public async Task InitializeAsync() => await TestDatabaseCleaner.ResetAsync();
@@ -41,7 +41,7 @@ public sealed class CreateDriverTests : IClassFixture<IntegrationTestWebAppFacto
     [Fact]
     public async Task Should_return_400_when_drivername_is_too_long()
     {
-        var request = new CreateDriverRequest(new string('X',201));
+        var request = new CreateDriverRequest(new string('X', 201));
 
         var response = await _client.PostAsJsonAsync("/drivers", request);
 

@@ -23,7 +23,7 @@ public sealed class CreateDriverCommandValidationTests
     [Fact]
     public async Task Should_have_error_when_driver_name_exceeds_maximum_allowed_length()
     {
-        var command = new CreateDriverCommand(new string('X',201));
+        var command = new CreateDriverCommand(new string('X', 201));
 
         var result = await _validator.TestValidateAsync(command);
 

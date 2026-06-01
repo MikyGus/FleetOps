@@ -19,65 +19,65 @@ public sealed class FleetOpsDbContext : DbContext
     {
         modelBuilder.Entity<Assignment>(entity =>
         {
-           entity.ToTable("assignments");
+            entity.ToTable("assignments");
 
-           entity.HasKey(x => x.Id);
+            entity.HasKey(x => x.Id);
 
-           entity.Property(x => x.Id).HasColumnName("id");
-           entity.Property(x => x.DriverId).HasColumnName("driver_id").IsRequired();
-           entity.Property(x => x.VehicleId).HasColumnName("vehicle_id").IsRequired();
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.DriverId).HasColumnName("driver_id").IsRequired();
+            entity.Property(x => x.VehicleId).HasColumnName("vehicle_id").IsRequired();
 
-           entity.Property(x => x.StartUtc).HasColumnName("start_utc").IsRequired();
-           entity.Property(x => x.EndUtc).HasColumnName("end_utc").IsRequired(); 
+            entity.Property(x => x.StartUtc).HasColumnName("start_utc").IsRequired();
+            entity.Property(x => x.EndUtc).HasColumnName("end_utc").IsRequired();
 
-           entity.HasOne(x => x.Driver)
-               .WithMany(x => x.Assignments)
-               .HasForeignKey(x => x.DriverId)
-               .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Driver)
+                .WithMany(x => x.Assignments)
+                .HasForeignKey(x => x.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-           entity.HasOne(x => x.Vehicle)
-               .WithMany(x => x.Assignments)
-               .HasForeignKey(x => x.VehicleId)
-               .OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne(x => x.Vehicle)
+                .WithMany(x => x.Assignments)
+                .HasForeignKey(x => x.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<Driver>(entity =>
         {
-           entity.ToTable("drivers");
+            entity.ToTable("drivers");
 
-           entity.HasKey(x => x.Id);
+            entity.HasKey(x => x.Id);
 
-           entity.Property(x => x.Id)
-                .HasColumnName("id");
-           
-           entity.Property(x => x.Name)
-                .HasColumnName("name")
-                .HasMaxLength(200)
-                .IsRequired();
-            
-           entity.Property(x => x.IsActive)
-                .HasColumnName("is_active")
-                .IsRequired();
+            entity.Property(x => x.Id)
+                 .HasColumnName("id");
+
+            entity.Property(x => x.Name)
+                 .HasColumnName("name")
+                 .HasMaxLength(200)
+                 .IsRequired();
+
+            entity.Property(x => x.IsActive)
+                 .HasColumnName("is_active")
+                 .IsRequired();
         });
 
         modelBuilder.Entity<Vehicle>(entity =>
         {
-           entity.ToTable("vehicles");
+            entity.ToTable("vehicles");
 
-           entity.HasKey(x => x.Id);
+            entity.HasKey(x => x.Id);
 
-           entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.Id).HasColumnName("id");
 
-           entity.Property(x => x.RegistrationNumber)
-                .HasColumnName("registration_number")
-                .HasMaxLength(20)
-                .IsRequired();
-                
-           entity.Property(x => x.IsActive)
-                .HasColumnName("is_active")
-                .IsRequired();
+            entity.Property(x => x.RegistrationNumber)
+                 .HasColumnName("registration_number")
+                 .HasMaxLength(20)
+                 .IsRequired();
 
-           entity.HasIndex(x => x.RegistrationNumber).IsUnique();
+            entity.Property(x => x.IsActive)
+                 .HasColumnName("is_active")
+                 .IsRequired();
+
+            entity.HasIndex(x => x.RegistrationNumber).IsUnique();
         });
     }
 }
