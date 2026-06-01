@@ -61,7 +61,7 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
     [Fact]
     public async Task Should_return_only_drivers_containing_searchstring()
     {
-        _ = await _seeder.Seed()
+        var seedResult = await _seeder.Seed()
             .SeedDrivers(10, "Driver", DbSeedBuilder.AffixPosition.Postfix)
             .SeedDrivers(10, "DrIVer", DbSeedBuilder.AffixPosition.Prefix)
             .SeedDrivers(10, "DrivER", DbSeedBuilder.AffixPosition.Prefix | DbSeedBuilder.AffixPosition.Postfix)
@@ -81,8 +81,12 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
         result.ShouldNotBeNull();
         result.Count.ShouldBe(30);
 
-        result.ShouldAllBe(x => x.Name.Contains("driver", StringComparison.InvariantCultureIgnoreCase));
-        result.Select(x => x.Name).ShouldBeInOrder();
+        var expectedDrivers = seedResult.Drivers.Values
+            .Where(x => x.Name.Contains("driver", StringComparison.InvariantCultureIgnoreCase))
+            .OrderBy(x => x.Name)
+            .Select(x => new DriverResponse(x.Id, x.Name, x.IsActive))
+            .ToList();
+        result.ShouldBe(expectedDrivers);
     }
 
     [Fact]
@@ -110,9 +114,9 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
         var expectedDrivers = seedResult.Drivers.Values
             .OrderBy(x => x.Name)
             .Take(limit)
+            .Select(x => new DriverResponse(x.Id, x.Name, x.IsActive))
             .ToList();
-        result.Select(x => x.Id)
-            .ShouldBe(expectedDrivers.Select(x => x.Id));
+        result.ShouldBe(expectedDrivers);
     }
 
     [Fact]
@@ -143,8 +147,8 @@ public sealed class GetDriversTests : IClassFixture<IntegrationTestWebAppFactory
             .OrderBy(x => x.Name)
             .Skip(offset)
             .Take(limit)
+            .Select(x => new DriverResponse(x.Id, x.Name, x.IsActive))
             .ToList();
-        result.Select(x => x.Id)
-            .ShouldBe(expectedDrivers.Select(x => x.Id));
+        result.ShouldBe(expectedDrivers);
     }
 }
