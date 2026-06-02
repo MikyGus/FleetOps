@@ -33,7 +33,7 @@ public sealed class GetAssignmentsQueryValidatorTests()
     [Fact]
     public async Task Should_not_have_error_for_valid_pagination()
     {
-        var query = new GetAssignmentsQuery(null,null,null,null,50,0);
+        var query = new GetAssignmentsQuery(null, null, null, null, 50, 0);
 
         await ValidationAssert.HasNoError(_validator, query, x => x.Limit);
         await ValidationAssert.HasNoError(_validator, query, x => x.Offset);

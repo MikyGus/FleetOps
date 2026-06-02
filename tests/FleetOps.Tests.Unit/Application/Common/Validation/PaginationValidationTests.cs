@@ -22,7 +22,7 @@ public sealed class PaginationValidationTests
     [Fact]
     public async Task Should_have_error_when_limit_is_zero()
     {
-        var model = new PaginationTestModel(0,1);
+        var model = new PaginationTestModel(0, 1);
 
         var result = await _validator.TestValidateAsync(model);
 
@@ -33,7 +33,7 @@ public sealed class PaginationValidationTests
     [Fact]
     public async Task Should_have_error_when_limit_exceeds_maximum_limit()
     {
-        var model = new PaginationTestModel(1000,1);
+        var model = new PaginationTestModel(1000, 1);
 
         var result = await _validator.TestValidateAsync(model);
 
@@ -44,7 +44,7 @@ public sealed class PaginationValidationTests
     [Fact]
     public async Task Should_not_have_error_when_limit_at_maximum()
     {
-        var model = new PaginationTestModel(ValidationConstants.Pagination.MaxPageSize,1);
+        var model = new PaginationTestModel(ValidationConstants.Pagination.MaxPageSize, 1);
 
         var result = await _validator.TestValidateAsync(model);
 
@@ -64,7 +64,7 @@ public sealed class PaginationValidationTests
     [Fact]
     public async Task Should_have_error_when_offset_is_negative()
     {
-        var model = new PaginationTestModel(10,-1);
+        var model = new PaginationTestModel(10, -1);
 
         var result = await _validator.TestValidateAsync(model);
 

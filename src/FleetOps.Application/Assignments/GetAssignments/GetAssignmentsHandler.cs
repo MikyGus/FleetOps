@@ -17,7 +17,7 @@ public sealed class GetAssignmentsHandler
 
     public async Task<List<AssignmentDto>> HandleAsync(GetAssignmentsQuery query, CancellationToken ct)
     {
-        var validation =  await _validator.ValidateAsync(query, ct);
+        var validation = await _validator.ValidateAsync(query, ct);
         if (!validation.IsValid)
         {
             throw new ValidationException(validation.Errors);

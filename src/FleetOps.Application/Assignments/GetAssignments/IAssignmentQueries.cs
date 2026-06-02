@@ -3,7 +3,7 @@ namespace FleetOps.Application.Assignments.GetAssignments;
 public interface IAssignmentQueries
 {
     Task<AssignmentDto?> GetAssignmentByIdAsync(Guid id, CancellationToken ct);
-    
+
     Task<List<AssignmentDto>> GetAssignmentsAsync(
         Guid? driverId,
         Guid? vehicleId,

@@ -11,6 +11,6 @@ public sealed class VehicleExistenceChecker : IEntityExistenceChecker<Vehicle, G
 
     public VehicleExistenceChecker(FleetOpsDbContext db) => _db = db;
 
-    public Task<bool> ExistsAsync(Guid id, CancellationToken ct) 
+    public Task<bool> ExistsAsync(Guid id, CancellationToken ct)
         => _db.Vehicles.AsNoTracking().AnyAsync(x => x.Id == id, ct);
 }

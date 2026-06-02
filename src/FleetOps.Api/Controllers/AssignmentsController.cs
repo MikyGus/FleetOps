@@ -15,7 +15,7 @@ public sealed class AssignmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
         [FromServices] CreateAssignmentHandler handler,
-        [FromBody] CreateAssignmentRequest request, 
+        [FromBody] CreateAssignmentRequest request,
         CancellationToken ct)
     {
         var command = new CreateAssignmentCommand(
@@ -58,11 +58,11 @@ public sealed class AssignmentsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<AssignmentDto>> GetById(
         [FromServices] GetAssignmentByIdHandler handler,
-        Guid id, 
+        Guid id,
         CancellationToken ct)
     {
         AssignmentDto? assignment = await handler.HandleAsync(id, ct);
-         
+
         if (assignment is null)
         {
             return NotFound();

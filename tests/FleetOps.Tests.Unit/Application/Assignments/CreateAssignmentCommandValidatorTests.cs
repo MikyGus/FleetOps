@@ -25,7 +25,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         _driverChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        
+
         _vehicleChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -38,12 +38,12 @@ public sealed class CreateAssignmentCommandValidatorTests
             Guid.NewGuid(),
             startUtc,
             endUtc);
-        
+
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.DriverId)
             .WithErrorCode(ErrorCodes.Assignment.DriverId.Required);
-    }       
+    }
 
     [Fact]
     public async Task Should_have_error_when_vehicle_id_is_empty()
@@ -51,7 +51,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         _driverChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        
+
         _vehicleChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -65,7 +65,7 @@ public sealed class CreateAssignmentCommandValidatorTests
             startUtc,
             endUtc);
 
-        
+
         var result = await _validator.TestValidateAsync(command);
 
         result.ShouldHaveValidationErrorFor(x => x.VehicleId)
@@ -78,7 +78,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         _driverChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
-        
+
         _vehicleChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
@@ -96,7 +96,7 @@ public sealed class CreateAssignmentCommandValidatorTests
 
         result.ShouldHaveValidationErrorFor(x => x.DriverId)
             .WithErrorCode(ErrorCodes.Assignment.DriverId.NotFound);
-    }             
+    }
 
     [Fact]
     public async Task Should_have_error_if_vehicle_does_not_exist()
@@ -158,7 +158,7 @@ public sealed class CreateAssignmentCommandValidatorTests
         _driverChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
-        
+
         _vehicleChecker
             .Setup(x => x.ExistsAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);

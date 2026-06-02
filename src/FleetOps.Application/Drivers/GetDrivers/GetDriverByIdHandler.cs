@@ -12,5 +12,5 @@ public sealed class GetDriverByIdHandler
     public Task<DriverDto?> HandleAsync(Guid id, CancellationToken ct)
     {
         return _queries.GetDriverByIdAsync(id, ct);
-    } 
+    }
 }

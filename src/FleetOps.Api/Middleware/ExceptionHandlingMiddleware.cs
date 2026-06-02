@@ -48,11 +48,11 @@ public sealed class ExceptionHandlingMiddleware
         var response = new ErrorResponse(
             ApiErrorCodes.ValidationError.ErrorCode,
             ApiErrorCodes.ValidationError.Message,
-            new ()
+            new()
             {
-                { 
-                    ex.PropertyName, 
-                    [ new ErrorDetail(ex.ErrorCode, ex.Message) ] 
+                {
+                    ex.PropertyName,
+                    [ new ErrorDetail(ex.ErrorCode, ex.Message) ]
                 }
             });
 
@@ -93,12 +93,12 @@ public sealed class ExceptionHandlingMiddleware
                 response = new ErrorResponse(
                     ApiErrorCodes.ValidationError.ErrorCode,
                     ApiErrorCodes.ValidationError.Message,
-                    new ()
+                    new()
                     {
-                        { "DriverId", 
+                        { "DriverId",
                         [new ErrorDetail(
                             ErrorCodes.Assignment.DriverId.Overlap,
-                            "Driver already has an assignment during this time period.")] 
+                            "Driver already has an assignment during this time period.")]
                         }
                     });
                 break;
@@ -108,14 +108,14 @@ public sealed class ExceptionHandlingMiddleware
                 response = new ErrorResponse(
                     ApiErrorCodes.ValidationError.ErrorCode,
                     ApiErrorCodes.ValidationError.Message,
-                    new ()
+                    new()
                     {
-                        { "VehicleId", 
+                        { "VehicleId",
                         [new ErrorDetail(
                             ErrorCodes.Assignment.VehicleId.Overlap,
-                            "Vehicle already has an assignment during this time period.")] 
+                            "Vehicle already has an assignment during this time period.")]
                         }
-                    });                
+                    });
                 break;
 
             case "ck_assignments_time":
@@ -123,15 +123,15 @@ public sealed class ExceptionHandlingMiddleware
                 response = new ErrorResponse(
                     ApiErrorCodes.ValidationError.ErrorCode,
                     ApiErrorCodes.ValidationError.Message,
-                    new ()
+                    new()
                     {
-                        { 
+                        {
                             "startUtc", [new ErrorDetail(ErrorCodes.Assignment.TimeRange.Invalid,"StartUtc must be earlier than EndUtc.")]
                         },
                         {
-                            "endUtc", [new ErrorDetail(ErrorCodes.Assignment.TimeRange.Invalid,"EndUtc must be later than StartUtc.")] 
+                            "endUtc", [new ErrorDetail(ErrorCodes.Assignment.TimeRange.Invalid,"EndUtc must be later than StartUtc.")]
                         }
-                    });      
+                    });
                 break;
 
             default:
@@ -139,14 +139,14 @@ public sealed class ExceptionHandlingMiddleware
                 response = new ErrorResponse(
                     ApiErrorCodes.ServerError.ErrorCode,
                     ApiErrorCodes.ServerError.Message,
-                    new ()
+                    new()
                     {
-                        { ApiErrorCodes.ServerError.ErrorCode, 
+                        { ApiErrorCodes.ServerError.ErrorCode,
                         [new ErrorDetail(
                             ApiErrorCodes.ServerError.ErrorCode,
-                            ApiErrorCodes.ServerError.Message)] 
+                            ApiErrorCodes.ServerError.Message)]
                         }
-                    }); 
+                    });
                 break;
         }
 
@@ -161,14 +161,14 @@ public sealed class ExceptionHandlingMiddleware
         var response = new ErrorResponse(
             ApiErrorCodes.ServerError.ErrorCode,
             ApiErrorCodes.ServerError.Message,
-            new ()
+            new()
             {
-                { ApiErrorCodes.ServerError.ErrorCode, 
+                { ApiErrorCodes.ServerError.ErrorCode,
                 [new ErrorDetail(
                     ApiErrorCodes.ServerError.ErrorCode,
-                    ApiErrorCodes.ServerError.Message)] 
+                    ApiErrorCodes.ServerError.Message)]
                 }
-            }); 
+            });
 
         await context.Response.WriteAsJsonAsync(response);
     }
