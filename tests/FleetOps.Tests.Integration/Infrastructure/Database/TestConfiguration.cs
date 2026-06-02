@@ -4,7 +4,7 @@ namespace FleetOps.Tests.Integration.Infrastructure.Database;
 
 public static class TestConfiguration
 {
-    private static readonly IConfigurationRoot Configuration =
+    private static readonly IConfigurationRoot _configuration =
         new ConfigurationBuilder()
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.Testing.json", optional: true)
@@ -12,7 +12,7 @@ public static class TestConfiguration
             .Build();
 
     public static string PostgresConnectionString =>
-        Configuration.GetConnectionString("Postgres")
+        _configuration.GetConnectionString("Postgres")
         ?? throw new InvalidOperationException(
             "Missing connection string 'ConnectionStrings:Postgres' for integration tests.");
 }
