@@ -48,6 +48,9 @@ jobs:
       - name: Restore
         run: dotnet restore FleetOps.sln --locked-mode
 
+      - name: Format check
+        run: dotnet format FleetOps.sln --verify-no-changes --no-restore
+
       - name: Build
         run: dotnet build FleetOps.sln --no-restore --configuration Release
 
